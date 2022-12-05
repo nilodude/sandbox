@@ -17,6 +17,17 @@ La combinacion entre Three.js y Cannon-es.js ya hay gente que la ha usado (hay a
 
 [Three.js + Cannon.js Tutorial (part 1/2) | Intro to Physics with JavaScript](https://www.youtube.com/watch?v=Ht1JzJ6kB7g)
 
+La pagina oficial de Three.js tiene muchos apartados, por un lado está el [manual](https://threejs.org/manual/#en/fundamentals), en el que se explican de forma mas o menos lenta y segura los conceptos y la manera de entender el rollito. 
+Por otro lado está la [documentación](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene) con todas las clases y objetos que trae la librería y ejemplos de cómo se usa.
+
+La clave para ubicarse es fijarse en el menú de navegación:
+
+Manual (izquierda)   Documentacion (derecha)
+
+![image](https://user-images.githubusercontent.com/22574140/205631557-a2b08afd-2d81-415a-9088-0adb1e65cffb.png)  ![image](https://user-images.githubusercontent.com/22574140/205631646-82912ee0-932b-4239-a34e-c03eba7091f7.png)
+
+En el mundo ideal, el manual se supone que está pensado para leerse un número _finito_ de veces, sin embargo la documentación se debe estar consultando constantemente. 
+Ambos incluyen ejemplos 100% copiables y pegables y que funcionan.
 
 
 Instalation
