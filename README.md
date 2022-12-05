@@ -27,8 +27,8 @@ Manual (izquierda)   Documentacion (derecha)
 ![image](https://user-images.githubusercontent.com/22574140/205631557-a2b08afd-2d81-415a-9088-0adb1e65cffb.png)  ![image](https://user-images.githubusercontent.com/22574140/205631646-82912ee0-932b-4239-a34e-c03eba7091f7.png)
 
 En el mundo ideal, el manual se supone que está pensado para leerse un número _finito_ de veces, sin embargo la documentación se debe estar consultando constantemente. 
-Ambos incluyen ejemplos 100% copiables y pegables y que funcionan.
-
+Ambos incluyen ejemplos 100% copiables y pegables y que funcionan. 
+Lógicamente hay algunos pasos del "Setup" o "Getting Started" que con este proyecto ya están hechas.
 
 Instalation
 -----------
