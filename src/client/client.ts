@@ -17,15 +17,14 @@ renderer.setSize(size[0], size[1])
 
 //SCENE
 const scene = new THREE.Scene()
-scene.add(new THREE.AxesHelper(20))
 
 //ELEMENTS
 //camera
-const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 100)
+const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
 camera.position.x = 0.8;
-camera.position.y = 22.1;
-camera.position.z = 50;
-camera.rotation.x=-.27;
+camera.position.y = 9;
+camera.position.z = 25;
+camera.rotation.x=-.14;
 camera.rotation.y=-.04;
 camera.rotation.z=0;
 GUIUtils.addCameraFolder(camera);
@@ -39,7 +38,9 @@ scene.add(gridHelper);
 //cube
 const cube = GUIUtils.getWireframeCube()
 cube.position.x = 2;
-cube.position.y = 0.5;
+cube.position.y = 3;
+cube.position.z = 1;
+cube.add(new THREE.AxesHelper(5))
 scene.add(cube)
 GUIUtils.addCubeFolder(cube);
 
@@ -47,21 +48,25 @@ GUIUtils.addCubeFolder(cube);
 const sphere = GUIUtils.getWireframeSphere()
 sphere.position.x = -2;
 sphere.position.y = 0.5;
+sphere.add(new THREE.AxesHelper(5))
 scene.add(sphere)
 GUIUtils.addSphereFolder(sphere);
 
 //ermono
 const objLoader = new OBJLoader();
-  objLoader.load('models/mono.obj', (root) => {
+  objLoader.load('models/mono.obj', (monkey) => {
     
-    root.position.x = 0;
-    root.position.y = 0;
-    root.position.z = 0;
-    root.scale.x *= 5
-    root.scale.y *= 5
-    root.scale.z *= 5
-    scene.add(root);
-  }); 
+    monkey.position.x = 0;
+    monkey.position.y = 0;
+    monkey.position.z = 0;
+    // root.scale.x *= 5
+    // root.scale.y *= 5
+    // root.scale.z *= 5
+    monkey.add(new THREE.AxesHelper(5))
+    scene.add(monkey);
+}); 
+
+new OrbitControls(camera, renderer.domElement);
 
 //each animation frame gets calculated
 let theta = 0;
