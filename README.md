@@ -16,3 +16,22 @@ Digamos que ésta aplicación es _la GPU de esta "consola"_
 La combinacion entre Three.js y Cannon-es.js ya hay gente que la ha usado (hay algo de soporte en internet) y he estao investigando y está bastante intuitivo
 
 [Three.js + Cannon.js Tutorial (part 1/2) | Intro to Physics with JavaScript](https://www.youtube.com/watch?v=Ht1JzJ6kB7g)
+
+
+
+Instalation
+-----------
+Make sure you have [Node](https://nodejs.org/en/download/) installed/updated on your system.
+
+Download this project's zip and in your **FAVORITE** code editor:
+<pre>
+cd /sandbox
+npm install
+</pre>
+Once installed run:
+<pre>npm run start</pre> 
+
+![npm_run_start](https://user-images.githubusercontent.com/22574140/205627698-06f78ec1-4d09-40b3-9c91-2b1bafb17aea.png)
+
+Visit http://localhost:8080/ and you will be up and running! 
+Enhorabuena, sigues sin tener ni puta idea.
