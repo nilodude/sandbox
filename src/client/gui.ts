@@ -1,4 +1,5 @@
 import { GUI } from "dat.gui"
+import THREE = require("three");
 
 let gui: GUI;
 
@@ -28,7 +29,7 @@ function addCameraFolder(camera: THREE.PerspectiveCamera){
     const cameraFolder = gui.addFolder('Camera')
     cameraFolder.add(camera.position, 'x', -10, 10)
     cameraFolder.add(camera.position, 'y', -10, 10)
-    cameraFolder.add(camera.position, 'z', 0, 10)
+    cameraFolder.add(camera.position, 'z', -10, 20)
     const cameraRotationFolder = cameraFolder.addFolder('Rotation')
     cameraRotationFolder.add(camera.rotation, 'x', -1, 1, 0.01)
     cameraRotationFolder.add(camera.rotation, 'y', -1, 1, 0.01)
@@ -37,4 +38,14 @@ function addCameraFolder(camera: THREE.PerspectiveCamera){
     cameraFolder.open()
 }
 
-export {startGUI, addCubeFolder,addCameraFolder}
+
+function getWireframeCube(){
+    const geometry = new THREE.BoxGeometry()
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        wireframe: true,
+    });
+    return new THREE.Mesh(geometry, material)
+}
+
+export {startGUI, addCubeFolder,addCameraFolder,getWireframeCube}

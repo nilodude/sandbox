@@ -2,77 +2,55 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GUI } from 'dat.gui'
 import * as GUIUtils from '../client/gui'
+GUIUtils.startGUI();
 
+//CANVAS
+const width = window.innerWidth;
+const height = window.innerHeight;
+// const size = [870, 840]; // split screen
+const size = [1740, 825]; // fullscreen
+const canvas = document.getElementById('canvasID') as HTMLCanvasElement
+const renderer = new THREE.WebGLRenderer({ canvas: canvas })
+renderer.setSize(size[0], size[1])
+
+//SCENE
 const scene = new THREE.Scene()
+scene.add(new THREE.AxesHelper(20))
 
-const camera = new THREE.PerspectiveCamera(50, 1, 1, 100)
-// const camera2 = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
-// const camera3 = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
-// const camera4 = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
-
+//ELEMENTS
+//camera
+const camera = new THREE.PerspectiveCamera(45, size[0]/size[1], 1, 100)
 camera.position.x = 0.8;
-camera.position.y = 2.1;
-camera.position.z = 3.2;
-
+camera.position.y = 4.9;
+camera.position.z = 10;
 camera.rotation.x=-.27;
 camera.rotation.y=-.04;
 camera.rotation.z=0;
-// camera2.position.y = 1
-// camera2.lookAt(new THREE.Vector3(0, 0, 0))
-// camera3.position.z = 1
-// camera4.position.x = 1
-// camera4.lookAt(new THREE.Vector3(0, 0, 0))
+GUIUtils.addCameraFolder(camera);
 
-const canvas1 = document.getElementById('c1') as HTMLCanvasElement
-// const canvas2 = document.getElementById('c2') as HTMLCanvasElement
-// const canvas3 = document.getElementById('c3') as HTMLCanvasElement
-// const canvas4 = document.getElementById('c4') as HTMLCanvasElement
-const renderer1 = new THREE.WebGLRenderer({ canvas: canvas1 })
-renderer1.setSize(800, 800)
-// const renderer2 = new THREE.WebGLRenderer({ canvas: canvas2 })
-// renderer2.setSize(200, 200)
-// const renderer3 = new THREE.WebGLRenderer({ canvas: canvas3 })
-// renderer3.setSize(200, 200)
-// const renderer4 = new THREE.WebGLRenderer({ canvas: canvas4 })
-// renderer4.setSize(200, 200)
-
-//document.body.appendChild(renderer.domElement)
-
-// new OrbitControls(camera, renderer1.domElement)
-
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-})
-
-const cube = new THREE.Mesh(geometry, material)
-cube.position.y = 0.5;
-scene.add(cube)
-
+//grid
 const gridHelper = new THREE.GridHelper(400, 100, 0x0000ff, 0x808080);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
 scene.add(gridHelper);
 
-GUIUtils.startGUI();
-GUIUtils.addCameraFolder(camera);
+//cube
+const cube = GUIUtils.getWireframeCube()
+cube.position.y = 0.5;
+scene.add(cube)
 GUIUtils.addCubeFolder(cube);
 
+//each animation frame gets calculated
+let theta = 0;
 function animate() {
     requestAnimationFrame(animate)
-
-    // cube.rotation.x += 0.01
-    // cube.rotation.y += 0.01
-
+    theta += 0.1;
+    cube.rotation.y += 0.01 *Math.sin(theta)
     render()
 }
 
 function render() {
-    renderer1.render(scene, camera)
-    // renderer2.render(scene, camera2)
-    // renderer3.render(scene, camera3)
-    // renderer4.render(scene, camera4)
+    renderer.render(scene, camera)
 }
 
 animate()
