@@ -25,11 +25,30 @@ function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMateri
     cubeScaleFolder.add(cube.scale, 'z', -35, 35)
     cubeFolder.open()
 }
+function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>){
+    const sphereFolder = gui.addFolder('sphere')
+    const sphereRotationFolder = sphereFolder.addFolder('Rotation')
+    sphereRotationFolder.add(sphere.rotation, 'x', 0, Math.PI * 2)
+    sphereRotationFolder.add(sphere.rotation, 'y', 0, Math.PI * 2)
+    sphereRotationFolder.add(sphere.rotation, 'z', 0, Math.PI * 2)
+    // sphereRotationFolder.open()
+    const spherePositionFolder = sphereFolder.addFolder('Position')
+    spherePositionFolder.add(sphere.position, 'x', -10, 10)
+    spherePositionFolder.add(sphere.position, 'y', -10, 10)
+    spherePositionFolder.add(sphere.position, 'z', -10, 10)
+    // spherePositionFolder.open()
+    const sphereScaleFolder = sphereFolder.addFolder('Scale')
+    sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
+    sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
+    sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
+    sphereFolder.open()
+}
+const pakeviakreaunavariable = 50;
 function addCameraFolder(camera: THREE.PerspectiveCamera){
     const cameraFolder = gui.addFolder('Camera')
-    cameraFolder.add(camera.position, 'x', -10, 10)
-    cameraFolder.add(camera.position, 'y', -10, 10)
-    cameraFolder.add(camera.position, 'z', -10, 20)
+    cameraFolder.add(camera.position, 'x', -pakeviakreaunavariable, pakeviakreaunavariable)
+    cameraFolder.add(camera.position, 'y', -pakeviakreaunavariable, pakeviakreaunavariable)
+    cameraFolder.add(camera.position, 'z', -pakeviakreaunavariable, pakeviakreaunavariable)
     const cameraRotationFolder = cameraFolder.addFolder('Rotation')
     cameraRotationFolder.add(camera.rotation, 'x', -1, 1, 0.01)
     cameraRotationFolder.add(camera.rotation, 'y', -1, 1, 0.01)
@@ -48,4 +67,13 @@ function getWireframeCube(){
     return new THREE.Mesh(geometry, material)
 }
 
-export {startGUI, addCubeFolder,addCameraFolder,getWireframeCube}
+function getWireframeSphere(){
+    const geometry = new THREE.SphereGeometry()
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        wireframe: true,
+    });
+    return new THREE.Mesh(geometry, material)
+}
+
+export {startGUI, addCubeFolder,addCameraFolder,getWireframeCube,addSphereFolder, getWireframeSphere}
