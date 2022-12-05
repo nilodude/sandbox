@@ -5,9 +5,9 @@ How this project was setup
 --------------------------
 El código que convierte el sketch en una aplicación frontend lo he _sacado_ de un curso de udemy que con codigo de descuento sale por 12 pavo pero yo lo he hecho sin ver los videos y logicamente sin pagarlo:
 
-<pre>https://sbcode.net/threejs/introduction/</pre>
+[Curso TypeScript & Three.js](https://sbcode.net/threejs/introduction/)
 
-Ahí está el guión del curso, y lo he seguido pa poder tener la estructura básica de una aplicación typescript con su servidor web y ya poder concentrarse en el 3D y la fisica. El nota del curso se mete en cosas de three.js también, el curso tambien merece la pena acabarlo.
+Ahí está el guión del curso, y lo he seguido pa poder tener el _boilerplate_ o "la estructura básica de una aplicación typescript con su servidor web" y ya poder concentrarse en el 3D y la fisica. El nota del curso se mete en cosas de three.js también, el curso tambien merece la pena acabarlo.
 
 Dentro de ese guión explica cómo instalar Three.js, **AL PRINCIPIO** no hace falta irse a la docu de Three.js. Una vez el proyecto ya arranca, **SÍ** se trata de preocuparse solo por el [3D (THREE.JS)](https://threejs.org/manual/#en/fundamentals) y la [física (CANNON-ES.JS)](https://pmndrs.github.io/cannon-es/docs/) y lo que viene siendo el la lógica del juego, sea en el propio frontend o comunicándose con un backend.
 
