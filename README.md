@@ -9,7 +9,9 @@ El código que convierte el sketch en una aplicación frontend lo he _sacado_ de
 
 Ahí está el guión del curso, y lo he seguido pa poder tener la estructura básica de una aplicación typescript con su servidor web y ya poder concentrarse en el 3D y la fisica. El nota del curso se mete en cosas de three.js también, el curso tambien merece la pena acabarlo.
 
-Dentro de ese guión explica cómo instalar Three.js, *AL PRINCIPIO* no hace falta irse a la docu de Three.js. Una vez el proyecto ya arranca, SI se trata de preocuparse solo por el [3D (THREE.JS)](https://threejs.org/manual/#en/fundamentals) y la [física (CANNON-ES.JS)](https://pmndrs.github.io/cannon-es/docs/).
+Dentro de ese guión explica cómo instalar Three.js, **AL PRINCIPIO** no hace falta irse a la docu de Three.js. Una vez el proyecto ya arranca, **SÍ** se trata de preocuparse solo por el [3D (THREE.JS)](https://threejs.org/manual/#en/fundamentals) y la [física (CANNON-ES.JS)](https://pmndrs.github.io/cannon-es/docs/) y lo que viene siendo el la lógica del juego, sea en el propio frontend o comunicándose con un backend.
+
+Digamos que ésta aplicación es _la GPU de esta "consola"_
 
 La combinacion entre Three.js y Cannon-es.js ya hay gente que la ha usado (hay algo de soporte en internet) y he estao investigando y está bastante intuitivo
 
