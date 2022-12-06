@@ -73,9 +73,9 @@ const sphereBody = new CANNON.Body({
   material: spherePhysMat
 })
 sphereBody.linearDamping = 0.31;
-// const vehicle = new CANNON.RigidVehicle
+sphereBody.angularDamping = 0.9;
 
-world.addBody(sphereBody)
+world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
 
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
@@ -85,36 +85,52 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 
 world.addContactMaterial(groundSphereContactMat);
 
-// document.addEventListener('keydown', (event) => {
-//     const maxSteerVal = Math.PI / 8;
-//     const maxForce = 10;
+document.addEventListener('keydown', (event) => {
+    const maxSteerVal = Math.PI / 2;
+    const maxForce = 500;
+    let delta = clock.getDelta()
+    if(['w','ArrowUP'].includes(event.key)){
+        sphereBody.applyForce(new CANNON.Vec3(0,0,1))
+    }
+    if(['s','ArrowDown'].includes(event.key)){
+        sphereBody.velocity.z =+ maxForce * delta
+    }
+    if(['a','ArrowLeft'].includes(event.key)){
+        sphereBody.velocity.x =- maxForce * delta
+    }
+    if(['d','ArrowRight'].includes(event.key)){
+        sphereBody.velocity.x =+ maxForce * delta
+    }
+    switch (event.key) {
+      case 'w':
+      case 'ArrowUp':
+        //sphereVehicle.setWheelForce(maxForce, 0);
+        //sphereVehicle.setWheelForce(maxForce, 1);
+        sphereBody.velocity.z =- maxForce * delta
+        break;
 
-//     switch (event.key) {
-//       case 'w':
-//       case 'ArrowUp':
-//         vehicle.setWheelForce(maxForce, 0);
-//         vehicle.setWheelForce(maxForce, 1);
-//         break;
+      case 's':
+      case 'ArrowDown':
+        // sphereVehicle.setWheelForce(-maxForce / 2, 0);
+        //sphereVehicle.setWheelForce(-maxForce / 2, 1);
+        sphereBody.velocity.z =+ maxForce *delta
+        break;
 
-//       case 's':
-//       case 'ArrowDown':
-//         vehicle.setWheelForce(-maxForce / 2, 0);
-//         vehicle.setWheelForce(-maxForce / 2, 1);
-//         break;
+      case 'a':
+      case 'ArrowLeft':
+        // sphereVehicle.setSteeringValue(maxSteerVal, 0);
+        //sphereVehicle.setSteeringValue(maxSteerVal, 1);
+        sphereBody.velocity.x =- maxForce*delta
+        break;
 
-//       case 'a':
-//       case 'ArrowLeft':
-//         vehicle.setSteeringValue(maxSteerVal, 0);
-//         vehicle.setSteeringValue(maxSteerVal, 1);
-//         break;
-
-//       case 'd':
-//       case 'ArrowRight':
-//         vehicle.setSteeringValue(-maxSteerVal, 0);
-//         vehicle.setSteeringValue(-maxSteerVal, 1);
-//         break;
-//     }
-//   });
+      case 'd':
+      case 'ArrowRight':
+        // sphereVehicle.setSteeringValue(-maxSteerVal, 0);
+        //sphereVehicle.setSteeringValue(-maxSteerVal, 1);
+        sphereBody.velocity.x =+ maxForce  *delta
+        break;
+    }
+  });
 
 //ELEMENTS
 //camera
@@ -150,7 +166,7 @@ sphere.add(new THREE.AxesHelper(5))
 scene.add(sphere)
 
 
-//ermono
+//MONO
 const objLoader = new OBJLoader();
   objLoader.load('models/mono.obj', (monkey) => {
     
@@ -166,20 +182,24 @@ const objLoader = new OBJLoader();
 
 new OrbitControls(camera, renderer.domElement);
 
+
+const clock = new THREE.Clock();
 //each animation frame gets calculated
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
 let theta = 0;
 function animate() {
-    requestAnimationFrame(animate)
+    let mixerUpdateDelta = clock.getDelta();
+    
+    
     theta += 0.1;
     cube.rotation.y += 0.01 *Math.sin(theta);
 
     //fixedStep is independent from frameRate
-    world.fixedStep()
-
+    world.fixedStep(timeStep)
+    requestAnimationFrame(animate)
     //passing the time since last call
-    // const time = performance.now() / 1000 // seconds
+    {// const time = performance.now() / 1000 // seconds
     // if (!lastCallTime) {
     //     world.step(timeStep)
     // } else {
@@ -187,8 +207,9 @@ function animate() {
     //     world.step(timeStep, dt)
     // }
     // lastCallTime = time
+}
 
-    sphereBody.quaternion.z += 0.01 *Math.sin(theta);
+    //sphereBody.quaternion.z += 0.01 *Math.sin(theta);
     sphere.position.copy(utils.copyVector(sphereBody.position))
     sphere.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
 
