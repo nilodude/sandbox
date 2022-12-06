@@ -7,6 +7,7 @@ function startGUI(){
     gui = new GUI()
 }
 const limit = 50;
+//CUBE FOLDER
 function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>){
     const cubeFolder = gui.addFolder('Cube')
     const cubeRotationFolder = cubeFolder.addFolder('Rotation')
@@ -25,7 +26,8 @@ function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMateri
     cubeScaleFolder.add(cube.scale, 'z', -35, 35)
     cubeFolder.open()
 }
-function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>){
+//SPHERE FOLDER
+function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNormalMaterial>){
     const sphereFolder = gui.addFolder('sphere')
     const sphereRotationFolder = sphereFolder.addFolder('Rotation')
     sphereRotationFolder.add(sphere.rotation, 'x', 0, Math.PI * 2)
@@ -44,6 +46,7 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasi
     sphereFolder.open()
 }
 
+//CAMERA
 function addCameraFolder(camera: THREE.PerspectiveCamera){
     const cameraFolder = gui.addFolder('Camera')
     cameraFolder.add(camera.position, 'x', -limit, limit)
@@ -57,23 +60,24 @@ function addCameraFolder(camera: THREE.PerspectiveCamera){
     cameraFolder.open()
 }
 
-
+//CUBE
 function getWireframeCube(){
     const geometry = new THREE.BoxGeometry()
     const material = new THREE.MeshBasicMaterial({
         color: 0x00ff00,
         wireframe: true,
     });
-    return new THREE.Mesh(geometry, material)
+    const cube = new THREE.Mesh(geometry, material)
+    addCubeFolder(cube);
+    return cube;
 }
-
+//SPHERE
 function getWireframeSphere(){
     const geometry = new THREE.SphereGeometry()
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x00ff00,
-        wireframe: true,
-    });
-    return new THREE.Mesh(geometry, material)
+    const material = new THREE.MeshNormalMaterial();
+    const sphere = new THREE.Mesh(geometry, material)
+    addSphereFolder(sphere);
+    return sphere;
 }
 
 export {startGUI, addCubeFolder,addCameraFolder,getWireframeCube,addSphereFolder, getWireframeSphere}
