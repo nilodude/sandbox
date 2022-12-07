@@ -23,6 +23,10 @@ const scene = new THREE.Scene()
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
 scene.add(ambientLight)
 
+const spotlight = new THREE.SpotLight(0xffffff, 0.9, 0, 3*Math.PI / 2, 1)
+spotlight.position.set(0, 15, 0)
+spotlight.target.position.set(0, 0, 0)
+
 const spotlight1 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
 spotlight1.position.set(200, 10, 200)
 spotlight1.target.position.set(0, 0, 0)
@@ -47,6 +51,7 @@ spotlight4.target.position.set(0, 0, 0)
 // // spotlight.shadow.bias = -0.0001
 // spotlight.shadow.mapSize.width = 2048
 // spotlight.shadow.mapSize.height = 2048
+scene.add(spotlight)
 
 scene.add(spotlight1)
 scene.add(spotlight2)
@@ -59,10 +64,10 @@ const groundMat = new THREE.MeshPhysicalMaterial({
 	color: 0xff00ff,
 	side: THREE.FrontSide,
 	wireframe: false,
-    sheenRoughness: 0.01,
+    sheenRoughness: 0.001,
+    roughness: 0.001,
+    metalness: 0.5,
     reflectivity: 1,
-    clearcoat:1,
-    clearcoatRoughness: 0.01
  });
 const groundMesh = new THREE.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
@@ -325,10 +330,11 @@ const objLoader = new OBJLoader();
 //VEHICLE MESH
 const carGeometry = new THREE.BoxGeometry(8, 1, 16);
 const carMaterial = new THREE.MeshPhysicalMaterial({ 
-	color: 0x888888,
+	color: 0xaaaaaa,
 	side: THREE.FrontSide,
 	wireframe: false,
-    sheenRoughness: 0.01,
+    roughness: 0.01,
+    metalness: 0.9,
     reflectivity: 1,
     clearcoat:1,
     clearcoatRoughness: 0.01
