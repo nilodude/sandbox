@@ -172,32 +172,40 @@ document.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'w':
         case 'ArrowUp':
-            vehicle.setWheelForce(maxForce, 0);
-            vehicle.setWheelForce(maxForce, 1);
+            if (!air) {
+                vehicle.setWheelForce(maxForce, 0);
+                vehicle.setWheelForce(maxForce, 1);
+            }
             break;
 
         case 's':
         case 'ArrowDown':
-            vehicle.setWheelForce(-maxForce / 2, 0);
-            vehicle.setWheelForce(-maxForce / 2, 1);
+            if (!air) {
+                vehicle.setWheelForce(-maxForce / 2, 0);
+                vehicle.setWheelForce(-maxForce / 2, 1);
+            }
             break;
 
         case 'a':
         case 'ArrowLeft':
-            vehicle.setSteeringValue(maxSteerVal, 0);
-            vehicle.setSteeringValue(maxSteerVal, 1);
+            if (!air) {
+                vehicle.setSteeringValue(maxSteerVal, 0);
+                vehicle.setSteeringValue(maxSteerVal, 1);
+            }
             break;
 
         case 'd':
         case 'ArrowRight':
-            vehicle.setSteeringValue(-maxSteerVal, 0);
-            vehicle.setSteeringValue(-maxSteerVal, 1);
+            if (!air) {
+                vehicle.setSteeringValue(-maxSteerVal, 0);
+                vehicle.setSteeringValue(-maxSteerVal, 1);
+            }
             break;
 
         case ' ':
         case 'Space':
-            if(jumpReleased){
-                [wheelBody1,wheelBody2,wheelBody3,wheelBody4].forEach(wheel=>wheel.velocity.y += jumpVelocity);
+            if (jumpReleased) {
+                [wheelBody1, wheelBody2, wheelBody3, wheelBody4].forEach(wheel => wheel.velocity.y += jumpVelocity);
                 jumpReleased = false;
             }
             break;
@@ -238,9 +246,6 @@ document.addEventListener('keyup', (event) => {
     }       
 });
 
-const v0 = new THREE.Vector3()
-const q = new THREE.Quaternion()
-const angularVelocity = new THREE.Vector3()
 
 document.addEventListener('mousemove', (event) => {
     console.log(event.offsetX+','+event.offsetY)
@@ -248,10 +253,13 @@ document.addEventListener('mousemove', (event) => {
     let mouseY = event.clientY;
     if(air){
         // if (event.movementX > 0) {
-            var directionVector = new CANNON.Vec3(0, 0, -event.movementX);
+            var directionVector = new CANNON.Vec3(0, 0, event.movementX);
 		    var directionVector = carBody.quaternion.vmult( directionVector );
 		    carBody.angularVelocity.set( directionVector.x, directionVector.y, directionVector.z );
 
+            var cameradirectionVector = new CANNON.Vec3(0, 0, -event.movementX);
+		    var cameradirectionVector = carBody.quaternion.vmult( directionVector );
+		    // camera.applyQuaternion(new THREE.Quaternion(cameradirectionVector.x, cameradirectionVector.y, cameradirectionVector.z ));
             // wheelBody1.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody1.quaternion.z + 0.05)
             // wheelBody2.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody2.quaternion.z + 0.05)
             // wheelBody3.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody3.quaternion.z + 0.05)
