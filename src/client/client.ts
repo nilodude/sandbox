@@ -20,31 +20,49 @@ renderer.setSize(size[0], size[1])
 //SCENE
 const scene = new THREE.Scene()
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
 scene.add(ambientLight)
 
-const spotlight = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
-spotlight.position.set(10, 30, 20)
-spotlight.target.position.set(0, 0, 0)
+const spotlight1 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
+spotlight1.position.set(200, 10, 200)
+spotlight1.target.position.set(0, 0, 0)
+const spotlight2 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
+spotlight2.position.set(200, 10, -200)
+spotlight2.target.position.set(0, 0, 0)
 
-spotlight.castShadow = true
+const spotlight3 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
+spotlight3.position.set(-200, 10, 200)
+spotlight3.target.position.set(0, 0, 0)
 
-spotlight.shadow.camera.near = 10
-spotlight.shadow.camera.far = 100
-spotlight.shadow.camera.fov = 30
+const spotlight4 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
+spotlight4.position.set(-200, 10, -200)
+spotlight4.target.position.set(0, 0, 0)
 
-// spotlight.shadow.bias = -0.0001
-spotlight.shadow.mapSize.width = 2048
-spotlight.shadow.mapSize.height = 2048
+// spotlight.castShadow = true
 
-scene.add(spotlight)
+// spotlight.shadow.camera.near = 1
+// spotlight.shadow.camera.far = 1000
+// spotlight.shadow.camera.fov = 45
+
+// // spotlight.shadow.bias = -0.0001
+// spotlight.shadow.mapSize.width = 2048
+// spotlight.shadow.mapSize.height = 2048
+
+scene.add(spotlight1)
+scene.add(spotlight2)
+scene.add(spotlight3)
+scene.add(spotlight4)
 
 //GROUND MESH
-const groundGeo = new THREE.PlaneGeometry(30, 30);
-const groundMat = new THREE.MeshBasicMaterial({ 
-	color: 0xffffff,
+const groundGeo = new THREE.PlaneGeometry(500, 500);
+const groundMat = new THREE.MeshPhysicalMaterial({ 
+	color: 0xff00ff,
 	side: THREE.FrontSide,
-	wireframe: true 
+	wireframe: false,
+    sheenRoughness: 0.01,
+    reflectivity: 1,
+    clearcoat:1,
+    clearcoatRoughness: 0.01
  });
 const groundMesh = new THREE.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
@@ -263,7 +281,8 @@ GUIUtils.addCameraFolder(camera);
 const gridHelper = new THREE.GridHelper(1000, 100, 0x0000ff, 0x808080);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
-scene.add(gridHelper);
+gridHelper.position.z = -0.1;
+//scene.add(gridHelper);
 
 //cube
 const cube = GUIUtils.getWireframeCube()
@@ -297,7 +316,15 @@ const objLoader = new OBJLoader();
 
 //VEHICLE MESH
 const carGeometry = new THREE.BoxGeometry(8, 1, 16);
-const carMaterial = new THREE.MeshNormalMaterial();
+const carMaterial = new THREE.MeshPhysicalMaterial({ 
+	color: 0x888888,
+	side: THREE.FrontSide,
+	wireframe: false,
+    sheenRoughness: 0.01,
+    reflectivity: 1,
+    clearcoat:1,
+    clearcoatRoughness: 0.01
+ });
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 scene.add(carMesh);
 
