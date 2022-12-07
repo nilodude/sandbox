@@ -73,21 +73,21 @@ const sphereBody = new CANNON.Body({
   material: spherePhysMat
 })
 sphereBody.linearDamping = 0.31;
-sphereBody.angularDamping = 0.9;
+sphereBody.angularDamping = 0.8;
 
 world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
 
 const carBody = new CANNON.Body({
-    mass: 100,
+    mass: 80,
     position: new CANNON.Vec3(0, 7, 0),
-    shape: new CANNON.Box(new CANNON.Vec3(2, 0.5, 4)),
+    shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
 });
 
 const vehicle = new CANNON.RigidVehicle({
     chassisBody: carBody,
 });
 
-const mass = 5;
+const mass = 3;
 const axisWidth = 8.5;
 const wheelShape = new CANNON.Sphere(1);
 const wheelMaterial = spherePhysMat// new CANNON.Material('wheel');
@@ -99,7 +99,7 @@ wheelBody1.addShape(wheelShape);
 wheelBody1.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody1,
-  position: new CANNON.Vec3( axisWidth / 2, 0,-2),
+  position: new CANNON.Vec3( axisWidth / 2, 0,-5),
   axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
@@ -109,7 +109,7 @@ wheelBody2.addShape(wheelShape);
 wheelBody2.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody2,
-  position: new CANNON.Vec3(-axisWidth / 2, 0, -2),
+  position: new CANNON.Vec3(-axisWidth / 2, 0, -5),
   axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
@@ -119,7 +119,7 @@ wheelBody3.addShape(wheelShape);
 wheelBody3.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody3,
-  position: new CANNON.Vec3(axisWidth / 2, 0,  2),
+  position: new CANNON.Vec3(axisWidth / 2, 0,  5),
   axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
@@ -129,7 +129,7 @@ wheelBody4.addShape(wheelShape);
 wheelBody4.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody4,
-  position: new CANNON.Vec3(-axisWidth / 2, 0, 2),
+  position: new CANNON.Vec3(-axisWidth / 2, 0, 5),
   axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
@@ -147,7 +147,7 @@ world.addContactMaterial(groundSphereContactMat);
 
 document.addEventListener('keydown', (event) => {
     const maxSteerVal = Math.PI / 8;
-    const maxForce = 950;
+    const maxForce = 900;
 
     switch (event.key) {
         case 'w':
@@ -261,7 +261,7 @@ const objLoader = new OBJLoader();
 }); 
 
 //VEHICLE MESH
-const carGeometry = new THREE.BoxGeometry(4, 1, 8);
+const carGeometry = new THREE.BoxGeometry(8, 1, 16);
 const carMaterial = new THREE.MeshNormalMaterial();
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 scene.add(carMesh);
