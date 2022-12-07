@@ -78,7 +78,7 @@ sphereBody.angularDamping = 0.9;
 world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
 
 const carBody = new CANNON.Body({
-    mass: 10,
+    mass: 50,
     position: new CANNON.Vec3(0, 6, 0),
     shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 2)),
 });
@@ -87,7 +87,7 @@ const vehicle = new CANNON.RigidVehicle({
     chassisBody: carBody,
   });
 
-const mass = 1;
+const mass = 2;
 const axisWidth = 5;
 const wheelShape = new CANNON.Sphere(1);
 const wheelMaterial = new CANNON.Material('wheel');
@@ -139,14 +139,14 @@ vehicle.addToWorld(world);
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
     spherePhysMat,
-    {restitution: 0.7}
+    {restitution: 0.5}
 );
 
 world.addContactMaterial(groundSphereContactMat);
 
 document.addEventListener('keydown', (event) => {
     const maxSteerVal = Math.PI / 4;
-    const maxForce = 60;
+    const maxForce = 350;
 
     switch (event.key) {
         case 'w':
@@ -175,10 +175,10 @@ document.addEventListener('keydown', (event) => {
 
         case ' ':
         case 'Space':
-            wheelBody1.velocity.y += 30;
-            wheelBody2.velocity.y += 30;
-            wheelBody3.velocity.y += 20;
-            wheelBody4.velocity.y += 20;
+            wheelBody1.velocity.y += 50;
+            wheelBody2.velocity.y += 50;
+            wheelBody3.velocity.y += 45;
+            wheelBody4.velocity.y += 45;
             
 
     }
