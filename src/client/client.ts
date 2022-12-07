@@ -42,15 +42,15 @@ const spotlight4 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
 spotlight4.position.set(-200, 10, -200)
 spotlight4.target.position.set(0, 0, 0)
 
-// spotlight.castShadow = true
+spotlight.castShadow = true
 
-// spotlight.shadow.camera.near = 1
-// spotlight.shadow.camera.far = 1000
-// spotlight.shadow.camera.fov = 45
+spotlight.shadow.camera.near = 1
+spotlight.shadow.camera.far = 1000
+spotlight.shadow.camera.fov = 45
 
-// // spotlight.shadow.bias = -0.0001
-// spotlight.shadow.mapSize.width = 2048
-// spotlight.shadow.mapSize.height = 2048
+spotlight.shadow.bias = -0.0001
+spotlight.shadow.mapSize.width = 2048
+spotlight.shadow.mapSize.height = 2048
 scene.add(spotlight)
 
 scene.add(spotlight1)
