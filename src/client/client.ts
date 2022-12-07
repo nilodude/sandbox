@@ -43,7 +43,7 @@ scene.add(spotlight)
 const groundGeo = new THREE.PlaneGeometry(30, 30);
 const groundMat = new THREE.MeshBasicMaterial({ 
 	color: 0xffffff,
-	side: THREE.DoubleSide,
+	side: THREE.FrontSide,
 	wireframe: true 
  });
 const groundMesh = new THREE.Mesh(groundGeo, groundMat);
@@ -144,11 +144,13 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 );
 
 world.addContactMaterial(groundSphereContactMat);
-
+let avgSpeed= 0;
+let jumpVelocity = 70
+let jumpReleased = true;
 document.addEventListener('keydown', (event) => {
-    const maxSteerVal = Math.PI / 8;
-    const maxForce = 900;
-
+    let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 8;
+    const maxForce = avgSpeed < 30 ? 1200 : 900;
+      
     switch (event.key) {
         case 'w':
         case 'ArrowUp':
@@ -176,41 +178,45 @@ document.addEventListener('keydown', (event) => {
 
         case ' ':
         case 'Space':
-            wheelBody1.velocity.y += 50;
-            wheelBody2.velocity.y += 50;
-            wheelBody3.velocity.y += 48;
-            wheelBody4.velocity.y += 48;
+            if(jumpReleased){
+                [wheelBody1,wheelBody2,wheelBody3,wheelBody4].forEach(wheel=>wheel.velocity.y += jumpVelocity);
+                jumpReleased = false;
+            }
     }
 });
 
-  // reset car force to zero when key is released
-  document.addEventListener('keyup', (event) => {
+// reset car force to zero when key is released
+document.addEventListener('keyup', (event) => {
     switch (event.key) {
-      case 'w':
-      case 'ArrowUp':
-        vehicle.setWheelForce(0, 0);
-        vehicle.setWheelForce(0, 1);
-        break;
+        case 'w':
+        case 'ArrowUp':
+            vehicle.setWheelForce(0, 0);
+            vehicle.setWheelForce(0, 1);
+            break;
 
-      case 's':
-      case 'ArrowDown':
-        vehicle.setWheelForce(-0, 0);
-        vehicle.setWheelForce(0, 1);
-        break;
+        case 's':
+        case 'ArrowDown':
+            vehicle.setWheelForce(-0, 0);
+            vehicle.setWheelForce(0, 1);
+            break;
 
-      case 'a':
-      case 'ArrowLeft':
-        vehicle.setSteeringValue(0, 0);
-        vehicle.setSteeringValue(0, 1);
-        break;
+        case 'a':
+        case 'ArrowLeft':
+            vehicle.setSteeringValue(0, 0);
+            vehicle.setSteeringValue(0, 1);
+            break;
 
-      case 'd':
-      case 'ArrowRight':
-        vehicle.setSteeringValue(0, 0);
-        vehicle.setSteeringValue(0, 1);
-        break;
+        case 'd':
+        case 'ArrowRight':
+            vehicle.setSteeringValue(0, 0);
+            vehicle.setSteeringValue(0, 1);
+            break;
+
+        case ' ':
+        case 'Space':
+            jumpReleased = true;
     }
-  });
+});
 
 //ELEMENTS
 //camera
@@ -333,11 +339,15 @@ function animate() {
     wheelMesh4.position.copy(utils.copyVector(wheelBody4.position));
     wheelMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
 
+    avgSpeed = (vehicle.getWheelSpeed(2) +vehicle.getWheelSpeed(3))/2
+    // console.log(avgSpeed) 
+    // console.log(wheelBody1.position.y) 
+    
     // gridHelper.position.x += -(carBody.velocity.x/2) * timeStep
     // gridHelper.position.z += -(carBody.velocity.z/2) * timeStep
 
     // gridHelper.position.x = (gridHelper.position.x) % 40
-    gridHelper.position.z = (gridHelper.position.z) % 80
+    // gridHelper.position.z = (gridHelper.position.z) % 80
     
     render();
 }
