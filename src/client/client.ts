@@ -93,7 +93,7 @@ const wheelShape = new CANNON.Sphere(1);
 const wheelMaterial = spherePhysMat// new CANNON.Material('wheel');
 const down = new CANNON.Vec3(0, -1, 0);
 const angularDamping = 0.8;
-
+let air = false;
 const wheelBody1 = new CANNON.Body({ mass, material: wheelMaterial });
 wheelBody1.addShape(wheelShape);
 wheelBody1.angularDamping = angularDamping;
@@ -142,8 +142,8 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
     {restitution: 0.01, 
     friction: 0.7}
 );
-
 world.addContactMaterial(groundSphereContactMat);
+
 let avgSpeed= 0;
 let jumpVelocity = 70
 let jumpReleased = true;
@@ -182,6 +182,7 @@ document.addEventListener('keydown', (event) => {
                 [wheelBody1,wheelBody2,wheelBody3,wheelBody4].forEach(wheel=>wheel.velocity.y += jumpVelocity);
                 jumpReleased = false;
             }
+            break;
     }
 });
 
@@ -215,12 +216,40 @@ document.addEventListener('keyup', (event) => {
         case ' ':
         case 'Space':
             jumpReleased = true;
-    }
+            break;
+    }       
 });
+
+const v0 = new THREE.Vector3()
+const q = new THREE.Quaternion()
+const angularVelocity = new THREE.Vector3()
+
+document.addEventListener('mousemove', (event) => {
+    console.log(event.offsetX+','+event.offsetY)
+    let mouseX = event.clientX;
+    let mouseY = event.clientY;
+    if(air){
+        // if (event.movementX > 0) {
+            var directionVector = new CANNON.Vec3(0, 0, -event.movementX);
+		    var directionVector = carBody.quaternion.vmult( directionVector );
+		    carBody.angularVelocity.set( directionVector.x, directionVector.y, directionVector.z );
+
+            // wheelBody1.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody1.quaternion.z + 0.05)
+            // wheelBody2.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody2.quaternion.z + 0.05)
+            // wheelBody3.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody3.quaternion.z + 0.05)
+            // wheelBody4.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody4.quaternion.z + 0.05)
+    //    }
+        // if(event.movementX < 0)
+            // carBody.quaternion.z -0.05 //setFromAxisAngle(new CANNON.Vec3(0,0,1),carBody.quaternion.z - 0.01)
+       
+        // carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,0,1),event.movementX/10)
+    }
+})
+
+
 
 //ELEMENTS
 //camera
-
 const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
 camera.position.x = 1;
 camera.position.y = 20;
@@ -302,6 +331,7 @@ const clock = new THREE.Clock();
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
 let theta = 0;
+
 function animate() {
     theta += 0.1;
     cube.rotation.y += 0.01 *Math.sin(theta);
@@ -322,6 +352,9 @@ function animate() {
 }
 
     //sphereBody.quaternion.z += 0.01 *Math.sin(theta);
+
+    //ROTATE VEHICLE WITH MOUSEX AND MOUSEY
+
     sphere.position.copy(utils.copyVector(sphereBody.position))
     sphere.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
 
@@ -340,6 +373,10 @@ function animate() {
     wheelMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
 
     avgSpeed = (vehicle.getWheelSpeed(2) +vehicle.getWheelSpeed(3))/2
+    air = ![wheelBody1.position.y,wheelBody2.position.y,wheelBody3.position.y,wheelBody4.position.y].some(pos=>pos < 1.0)
+    
+    
+
     // console.log(avgSpeed) 
     // console.log(wheelBody1.position.y) 
     
