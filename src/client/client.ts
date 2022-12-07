@@ -262,6 +262,8 @@ document.addEventListener('mousemove', (event) => {
 		    var directionVector = carBody.quaternion.vmult( directionVector );
 		    carBody.angularVelocity.set( directionVector.x, directionVector.y, directionVector.z );
 
+            //HAY QUE CONSEGUIR QUE GIRE EL VEHICULO SIN LA CAMARA
+            //DESANIDAR CAMARA DE VEHICULO? E IR APLICANDOLE LA POSITION Y QUATERNION DEL CARBODY EN CADA FRAME?
             var cameradirectionVector = new CANNON.Vec3(0, 0, -event.movementX);
 		    var cameradirectionVector = carBody.quaternion.vmult( directionVector );
 		    // camera.applyQuaternion(new THREE.Quaternion(cameradirectionVector.x, cameradirectionVector.y, cameradirectionVector.z ));
