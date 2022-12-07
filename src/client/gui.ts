@@ -40,9 +40,9 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNorm
     spherePositionFolder.add(sphere.position, 'z', -limit, limit)
     // spherePositionFolder.open()
     const sphereScaleFolder = sphereFolder.addFolder('Scale')
-    sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
-    sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
-    sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
+    // sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
+    // sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
+    // sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
     sphereFolder.open()
 }
 

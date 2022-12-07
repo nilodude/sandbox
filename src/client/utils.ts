@@ -8,11 +8,12 @@ function copyVector(cannonVec:  CANNON.Vec3 ){
     threeVec.z=cannonVec.z;
     return threeVec;
 }
-function copyQuaternion(cannonVec:   CANNON.Quaternion){
+function copyQuaternion(cannonQuat:   CANNON.Quaternion){
     let threeQuat= new THREE.Quaternion;
-    threeQuat.x=cannonVec.x;
-    threeQuat.y=cannonVec.y;
-    threeQuat.z=cannonVec.z;
+    threeQuat.x=cannonQuat.x;
+    threeQuat.y=cannonQuat.y;
+    threeQuat.z=cannonQuat.z;
+    threeQuat.w = cannonQuat.w;
     return threeQuat;
 }
 

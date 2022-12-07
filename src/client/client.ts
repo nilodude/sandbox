@@ -67,15 +67,74 @@ world.addBody(groundBody)
 //SPHERE BODY
 const spherePhysMat = new CANNON.Material();
 const sphereBody = new CANNON.Body({
-  mass: 5, // kg
+  mass: 1, // kg
   shape: new CANNON.Sphere(1),
-  position: new CANNON.Vec3(0, 10, 0),
+  position: new CANNON.Vec3(5, 10, 0),
   material: spherePhysMat
 })
 sphereBody.linearDamping = 0.31;
 sphereBody.angularDamping = 0.9;
 
 world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
+
+const carBody = new CANNON.Body({
+    mass: 10,
+    position: new CANNON.Vec3(0, 6, 0),
+    shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 2)),
+});
+
+const vehicle = new CANNON.RigidVehicle({
+    chassisBody: carBody,
+  });
+
+const mass = 1;
+const axisWidth = 5;
+const wheelShape = new CANNON.Sphere(1);
+const wheelMaterial = new CANNON.Material('wheel');
+const down = new CANNON.Vec3(0, -1, 0);
+
+const wheelBody1 = new CANNON.Body({ mass, material: wheelMaterial });
+wheelBody1.addShape(wheelShape);
+wheelBody1.angularDamping = 0.4;
+vehicle.addWheel({
+  body: wheelBody1,
+  position: new CANNON.Vec3(-2, 0, axisWidth / 2),
+  axis: new CANNON.Vec3(0, 0, 1),
+  direction: down,
+});
+
+const wheelBody2 = new CANNON.Body({ mass, material: wheelMaterial });
+wheelBody2.addShape(wheelShape);
+wheelBody2.angularDamping = 0.4;
+vehicle.addWheel({
+  body: wheelBody2,
+  position: new CANNON.Vec3(-2, 0, -axisWidth / 2),
+  axis: new CANNON.Vec3(0, 0, 1),
+  direction: down,
+});
+
+const wheelBody3 = new CANNON.Body({ mass, material: wheelMaterial });
+wheelBody3.addShape(wheelShape);
+wheelBody3.angularDamping = 0.4;
+vehicle.addWheel({
+  body: wheelBody3,
+  position: new CANNON.Vec3(2, 0, axisWidth / 2),
+  axis: new CANNON.Vec3(0, 0, 1),
+  direction: down,
+});
+
+const wheelBody4 = new CANNON.Body({ mass, material: wheelMaterial });
+wheelBody4.addShape(wheelShape);
+wheelBody4.angularDamping = 0.4;
+vehicle.addWheel({
+  body: wheelBody4,
+  position: new CANNON.Vec3(2, 0, -axisWidth / 2),
+  axis: new CANNON.Vec3(0, 0, 1),
+  direction: down,
+});
+
+vehicle.addToWorld(world);
+
 
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
@@ -86,48 +145,70 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 world.addContactMaterial(groundSphereContactMat);
 
 document.addEventListener('keydown', (event) => {
-    const maxSteerVal = Math.PI / 2;
-    const maxForce = 500;
-    let delta = clock.getDelta()
-    if(['w','ArrowUP'].includes(event.key)){
-        sphereBody.applyForce(new CANNON.Vec3(0,0,1))
+    const maxSteerVal = Math.PI / 4;
+    const maxForce = 60;
+
+    switch (event.key) {
+        case 'w':
+        case 'ArrowUp':
+            vehicle.setWheelForce(maxForce, 0);
+            vehicle.setWheelForce(maxForce, 1);
+            break;
+
+        case 's':
+        case 'ArrowDown':
+            vehicle.setWheelForce(-maxForce / 2, 0);
+            vehicle.setWheelForce(-maxForce / 2, 1);
+            break;
+
+        case 'a':
+        case 'ArrowLeft':
+            vehicle.setSteeringValue(maxSteerVal, 0);
+            vehicle.setSteeringValue(maxSteerVal, 1);
+            break;
+
+        case 'd':
+        case 'ArrowRight':
+            vehicle.setSteeringValue(-maxSteerVal, 0);
+            vehicle.setSteeringValue(-maxSteerVal, 1);
+            break;
+
+        case ' ':
+        case 'Space':
+            wheelBody1.velocity.y += 30;
+            wheelBody2.velocity.y += 30;
+            wheelBody3.velocity.y += 20;
+            wheelBody4.velocity.y += 20;
+            
+
     }
-    if(['s','ArrowDown'].includes(event.key)){
-        sphereBody.velocity.z =+ maxForce * delta
-    }
-    if(['a','ArrowLeft'].includes(event.key)){
-        sphereBody.velocity.x =- maxForce * delta
-    }
-    if(['d','ArrowRight'].includes(event.key)){
-        sphereBody.velocity.x =+ maxForce * delta
-    }
+});
+
+  // reset car force to zero when key is released
+  document.addEventListener('keyup', (event) => {
     switch (event.key) {
       case 'w':
       case 'ArrowUp':
-        //sphereVehicle.setWheelForce(maxForce, 0);
-        //sphereVehicle.setWheelForce(maxForce, 1);
-        sphereBody.velocity.z =- maxForce * delta
+        vehicle.setWheelForce(0, 0);
+        vehicle.setWheelForce(0, 1);
         break;
 
       case 's':
       case 'ArrowDown':
-        // sphereVehicle.setWheelForce(-maxForce / 2, 0);
-        //sphereVehicle.setWheelForce(-maxForce / 2, 1);
-        sphereBody.velocity.z =+ maxForce *delta
+        vehicle.setWheelForce(0, 0);
+        vehicle.setWheelForce(0, 1);
         break;
 
       case 'a':
       case 'ArrowLeft':
-        // sphereVehicle.setSteeringValue(maxSteerVal, 0);
-        //sphereVehicle.setSteeringValue(maxSteerVal, 1);
-        sphereBody.velocity.x =- maxForce*delta
+        vehicle.setSteeringValue(0, 0);
+        vehicle.setSteeringValue(0, 1);
         break;
 
       case 'd':
       case 'ArrowRight':
-        // sphereVehicle.setSteeringValue(-maxSteerVal, 0);
-        //sphereVehicle.setSteeringValue(-maxSteerVal, 1);
-        sphereBody.velocity.x =+ maxForce  *delta
+        vehicle.setSteeringValue(0, 0);
+        vehicle.setSteeringValue(0, 1);
         break;
     }
   });
@@ -180,18 +261,41 @@ const objLoader = new OBJLoader();
     scene.add(monkey);
 }); 
 
-new OrbitControls(camera, renderer.domElement);
+//VEHICLE
+const boxGeometry = new THREE.BoxGeometry(8, 1, 4);
+const boxMaterial = new THREE.MeshNormalMaterial();
+const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+scene.add(boxMesh);
 
+const sphereGeometry1 = new THREE.SphereGeometry(1);
+const sphereMaterial1 = new THREE.MeshNormalMaterial();
+const sphereMesh1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
+scene.add(sphereMesh1);
+
+const sphereGeometry2 = new THREE.SphereGeometry(1);
+const sphereMaterial2 = new THREE.MeshNormalMaterial();
+const sphereMesh2 = new THREE.Mesh(sphereGeometry2, sphereMaterial2);
+scene.add(sphereMesh2);
+
+const sphereGeometry3 = new THREE.SphereGeometry(1);
+const sphereMaterial3 = new THREE.MeshNormalMaterial();
+const sphereMesh3 = new THREE.Mesh(sphereGeometry3, sphereMaterial3);
+scene.add(sphereMesh3);
+
+const sphereGeometry4 = new THREE.SphereGeometry(1);
+const sphereMaterial4 = new THREE.MeshNormalMaterial();
+const sphereMesh4 = new THREE.Mesh(sphereGeometry4, sphereMaterial4);
+scene.add(sphereMesh4);
+
+new OrbitControls(camera, renderer.domElement);
+world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
 const clock = new THREE.Clock();
-//each animation frame gets calculated
+//each ANIMATION frame gets calculated
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
 let theta = 0;
 function animate() {
-    let mixerUpdateDelta = clock.getDelta();
-    
-    
     theta += 0.1;
     cube.rotation.y += 0.01 *Math.sin(theta);
 
@@ -207,6 +311,7 @@ function animate() {
     //     world.step(timeStep, dt)
     // }
     // lastCallTime = time
+    // controls.update(dt)
 }
 
     //sphereBody.quaternion.z += 0.01 *Math.sin(theta);
@@ -216,8 +321,16 @@ function animate() {
     groundMesh.position.copy(utils.copyVector(groundBody.position));
     groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
 
-    console.log(`Sphere y position: ${sphereBody.position.y}`)
-
+    boxMesh.position.copy(utils.copyVector(carBody.position));
+      boxMesh.quaternion.copy(utils.copyQuaternion(carBody.quaternion));
+      sphereMesh1.position.copy(utils.copyVector(wheelBody1.position));
+      sphereMesh1.quaternion.copy(utils.copyQuaternion(wheelBody1.quaternion));
+      sphereMesh2.position.copy(utils.copyVector(wheelBody2.position));
+      sphereMesh2.quaternion.copy(utils.copyQuaternion(wheelBody2.quaternion));
+      sphereMesh3.position.copy(utils.copyVector(wheelBody3.position));
+      sphereMesh3.quaternion.copy(utils.copyQuaternion(wheelBody3.quaternion));
+      sphereMesh4.position.copy(utils.copyVector(wheelBody4.position));
+      sphereMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
     render();
 }
 
