@@ -85,7 +85,7 @@ const carBody = new CANNON.Body({
 
 const vehicle = new CANNON.RigidVehicle({
     chassisBody: carBody,
-  });
+});
 
 const mass = 2;
 const axisWidth = 5;
@@ -139,13 +139,14 @@ vehicle.addToWorld(world);
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
     spherePhysMat,
-    {restitution: 0.5}
+    {restitution: 0.5, 
+    friction: 0.09}
 );
 
 world.addContactMaterial(groundSphereContactMat);
 
 document.addEventListener('keydown', (event) => {
-    const maxSteerVal = Math.PI / 4;
+    const maxSteerVal = Math.PI / 5;
     const maxForce = 350;
 
     switch (event.key) {
@@ -179,8 +180,6 @@ document.addEventListener('keydown', (event) => {
             wheelBody2.velocity.y += 50;
             wheelBody3.velocity.y += 45;
             wheelBody4.velocity.y += 45;
-            
-
     }
 });
 
@@ -195,7 +194,7 @@ document.addEventListener('keydown', (event) => {
 
       case 's':
       case 'ArrowDown':
-        vehicle.setWheelForce(0, 0);
+        vehicle.setWheelForce(-0, 0);
         vehicle.setWheelForce(0, 1);
         break;
 
@@ -218,8 +217,8 @@ document.addEventListener('keydown', (event) => {
 
 const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
 camera.position.x = 0.8;
-camera.position.y = 9;
-camera.position.z = 25;
+camera.position.y = 33;
+camera.position.z = 73;
 camera.rotation.x=-.14;
 camera.rotation.y=-.04;
 camera.rotation.z=0;
@@ -229,7 +228,7 @@ GUIUtils.addCameraFolder(camera);
 const gridHelper = new THREE.GridHelper(400, 100, 0x0000ff, 0x808080);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
-//scene.add(gridHelper);
+scene.add(gridHelper);
 
 //cube
 const cube = GUIUtils.getWireframeCube()
@@ -262,32 +261,33 @@ const objLoader = new OBJLoader();
 }); 
 
 //VEHICLE
-const boxGeometry = new THREE.BoxGeometry(8, 1, 4);
-const boxMaterial = new THREE.MeshNormalMaterial();
-const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(boxMesh);
+const carGeometry = new THREE.BoxGeometry(8, 1, 4);
+const carMaterial = new THREE.MeshNormalMaterial();
+const carMesh = new THREE.Mesh(carGeometry, carMaterial);
+scene.add(carMesh);
 
-const sphereGeometry1 = new THREE.SphereGeometry(1);
-const sphereMaterial1 = new THREE.MeshNormalMaterial();
-const sphereMesh1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
-scene.add(sphereMesh1);
+const wheelGeometry1 = new THREE.SphereGeometry(1);
+const wheelMaterial1 = new THREE.MeshNormalMaterial();
+const wheelMesh1 = new THREE.Mesh(wheelGeometry1,wheelMaterial1);
+scene.add(wheelMesh1);
 
-const sphereGeometry2 = new THREE.SphereGeometry(1);
-const sphereMaterial2 = new THREE.MeshNormalMaterial();
-const sphereMesh2 = new THREE.Mesh(sphereGeometry2, sphereMaterial2);
-scene.add(sphereMesh2);
+const wheelGeometry2 = new THREE.SphereGeometry(1);
+const wheelMaterial2 = new THREE.MeshNormalMaterial();
+const wheelMesh2 = new THREE.Mesh(wheelGeometry2, wheelMaterial2);
+scene.add(wheelMesh2);
 
-const sphereGeometry3 = new THREE.SphereGeometry(1);
-const sphereMaterial3 = new THREE.MeshNormalMaterial();
-const sphereMesh3 = new THREE.Mesh(sphereGeometry3, sphereMaterial3);
-scene.add(sphereMesh3);
+const wheelGeometry3 = new THREE.SphereGeometry(1);
+const wheelMaterial3 = new THREE.MeshNormalMaterial();
+const wheelMesh3 = new THREE.Mesh(wheelGeometry3, wheelMaterial3);
+scene.add(wheelMesh3);
 
-const sphereGeometry4 = new THREE.SphereGeometry(1);
-const sphereMaterial4 = new THREE.MeshNormalMaterial();
-const sphereMesh4 = new THREE.Mesh(sphereGeometry4, sphereMaterial4);
-scene.add(sphereMesh4);
+const wheelGeometry4 = new THREE.SphereGeometry(1);
+const wheelMaterial4 = new THREE.MeshNormalMaterial();
+const wheelMesh4 = new THREE.Mesh(wheelGeometry4, wheelMaterial4);
+scene.add(wheelMesh4);
 
-new OrbitControls(camera, renderer.domElement);
+//new OrbitControls(camera, renderer.domElement);
+camera.lookAt(carMesh.position)
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
 const clock = new THREE.Clock();
@@ -321,16 +321,22 @@ function animate() {
     groundMesh.position.copy(utils.copyVector(groundBody.position));
     groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
 
-    boxMesh.position.copy(utils.copyVector(carBody.position));
-      boxMesh.quaternion.copy(utils.copyQuaternion(carBody.quaternion));
-      sphereMesh1.position.copy(utils.copyVector(wheelBody1.position));
-      sphereMesh1.quaternion.copy(utils.copyQuaternion(wheelBody1.quaternion));
-      sphereMesh2.position.copy(utils.copyVector(wheelBody2.position));
-      sphereMesh2.quaternion.copy(utils.copyQuaternion(wheelBody2.quaternion));
-      sphereMesh3.position.copy(utils.copyVector(wheelBody3.position));
-      sphereMesh3.quaternion.copy(utils.copyQuaternion(wheelBody3.quaternion));
-      sphereMesh4.position.copy(utils.copyVector(wheelBody4.position));
-      sphereMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
+    carMesh.position.copy(utils.copyVector(carBody.position));
+    carMesh.quaternion.copy(utils.copyQuaternion(carBody.quaternion));
+    wheelMesh1.position.copy(utils.copyVector(wheelBody1.position));
+    wheelMesh1.quaternion.copy(utils.copyQuaternion(wheelBody1.quaternion));
+    wheelMesh2.position.copy(utils.copyVector(wheelBody2.position));
+    wheelMesh2.quaternion.copy(utils.copyQuaternion(wheelBody2.quaternion));
+    wheelMesh3.position.copy(utils.copyVector(wheelBody3.position));
+    wheelMesh3.quaternion.copy(utils.copyQuaternion(wheelBody3.quaternion));
+    wheelMesh4.position.copy(utils.copyVector(wheelBody4.position));
+    wheelMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
+
+    gridHelper.position.x += carBody.velocity.x * timeStep
+    gridHelper.position.z += carBody.velocity.z * timeStep
+
+    gridHelper.position.x = gridHelper.position.x % 100
+    gridHelper.position.z = gridHelper.position.z % 100
     render();
 }
 

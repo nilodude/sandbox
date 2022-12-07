@@ -6,7 +6,7 @@ let gui: GUI;
 function startGUI(){
     gui = new GUI()
 }
-const limit = 50;
+const limit = 100;
 //CUBE FOLDER
 function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>){
     const cubeFolder = gui.addFolder('Cube')
@@ -40,9 +40,9 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNorm
     spherePositionFolder.add(sphere.position, 'z', -limit, limit)
     // spherePositionFolder.open()
     const sphereScaleFolder = sphereFolder.addFolder('Scale')
-    // sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
-    // sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
-    // sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
+    sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
+    sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
+    sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
     sphereFolder.open()
 }
 
