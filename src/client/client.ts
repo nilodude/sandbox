@@ -67,9 +67,9 @@ world.addBody(groundBody)
 //SPHERE BODY
 const spherePhysMat = new CANNON.Material();
 const sphereBody = new CANNON.Body({
-  mass: 1, // kg
+  mass: 2, // kg
   shape: new CANNON.Sphere(1),
-  position: new CANNON.Vec3(5, 10, 0),
+  position: new CANNON.Vec3(8, 10, 0),
   material: spherePhysMat
 })
 sphereBody.linearDamping = 0.31;
@@ -78,76 +78,76 @@ sphereBody.angularDamping = 0.9;
 world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
 
 const carBody = new CANNON.Body({
-    mass: 50,
-    position: new CANNON.Vec3(0, 6, 0),
-    shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 2)),
+    mass: 100,
+    position: new CANNON.Vec3(0, 7, 0),
+    shape: new CANNON.Box(new CANNON.Vec3(2, 0.5, 4)),
 });
 
 const vehicle = new CANNON.RigidVehicle({
     chassisBody: carBody,
 });
 
-const mass = 2;
-const axisWidth = 5;
+const mass = 5;
+const axisWidth = 8.5;
 const wheelShape = new CANNON.Sphere(1);
-const wheelMaterial = new CANNON.Material('wheel');
+const wheelMaterial = spherePhysMat// new CANNON.Material('wheel');
 const down = new CANNON.Vec3(0, -1, 0);
+const angularDamping = 0.8;
 
 const wheelBody1 = new CANNON.Body({ mass, material: wheelMaterial });
 wheelBody1.addShape(wheelShape);
-wheelBody1.angularDamping = 0.4;
+wheelBody1.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody1,
-  position: new CANNON.Vec3(-2, 0, axisWidth / 2),
-  axis: new CANNON.Vec3(0, 0, 1),
+  position: new CANNON.Vec3( axisWidth / 2, 0,-2),
+  axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
 
 const wheelBody2 = new CANNON.Body({ mass, material: wheelMaterial });
 wheelBody2.addShape(wheelShape);
-wheelBody2.angularDamping = 0.4;
+wheelBody2.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody2,
-  position: new CANNON.Vec3(-2, 0, -axisWidth / 2),
-  axis: new CANNON.Vec3(0, 0, 1),
+  position: new CANNON.Vec3(-axisWidth / 2, 0, -2),
+  axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
 
 const wheelBody3 = new CANNON.Body({ mass, material: wheelMaterial });
 wheelBody3.addShape(wheelShape);
-wheelBody3.angularDamping = 0.4;
+wheelBody3.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody3,
-  position: new CANNON.Vec3(2, 0, axisWidth / 2),
-  axis: new CANNON.Vec3(0, 0, 1),
+  position: new CANNON.Vec3(axisWidth / 2, 0,  2),
+  axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
 
 const wheelBody4 = new CANNON.Body({ mass, material: wheelMaterial });
 wheelBody4.addShape(wheelShape);
-wheelBody4.angularDamping = 0.4;
+wheelBody4.angularDamping = angularDamping;
 vehicle.addWheel({
   body: wheelBody4,
-  position: new CANNON.Vec3(2, 0, -axisWidth / 2),
-  axis: new CANNON.Vec3(0, 0, 1),
+  position: new CANNON.Vec3(-axisWidth / 2, 0, 2),
+  axis: new CANNON.Vec3(-1, 0, 0),
   direction: down,
 });
 
 vehicle.addToWorld(world);
 
-
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
     spherePhysMat,
-    {restitution: 0.5, 
-    friction: 0.09}
+    {restitution: 0.01, 
+    friction: 0.7}
 );
 
 world.addContactMaterial(groundSphereContactMat);
 
 document.addEventListener('keydown', (event) => {
-    const maxSteerVal = Math.PI / 5;
-    const maxForce = 350;
+    const maxSteerVal = Math.PI / 8;
+    const maxForce = 950;
 
     switch (event.key) {
         case 'w':
@@ -178,8 +178,8 @@ document.addEventListener('keydown', (event) => {
         case 'Space':
             wheelBody1.velocity.y += 50;
             wheelBody2.velocity.y += 50;
-            wheelBody3.velocity.y += 45;
-            wheelBody4.velocity.y += 45;
+            wheelBody3.velocity.y += 48;
+            wheelBody4.velocity.y += 48;
     }
 });
 
@@ -216,16 +216,16 @@ document.addEventListener('keydown', (event) => {
 //camera
 
 const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
-camera.position.x = 0.8;
-camera.position.y = 33;
-camera.position.z = 73;
-camera.rotation.x=-.14;
-camera.rotation.y=-.04;
+camera.position.x = 1;
+camera.position.y = 20;
+camera.position.z = 58;
+camera.rotation.x=-.22;
+camera.rotation.y=-0;
 camera.rotation.z=0;
 GUIUtils.addCameraFolder(camera);
 
 //grid
-const gridHelper = new THREE.GridHelper(400, 100, 0x0000ff, 0x808080);
+const gridHelper = new THREE.GridHelper(1000, 100, 0x0000ff, 0x808080);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
 scene.add(gridHelper);
@@ -260,11 +260,13 @@ const objLoader = new OBJLoader();
     scene.add(monkey);
 }); 
 
-//VEHICLE
-const carGeometry = new THREE.BoxGeometry(8, 1, 4);
+//VEHICLE MESH
+const carGeometry = new THREE.BoxGeometry(4, 1, 8);
 const carMaterial = new THREE.MeshNormalMaterial();
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 scene.add(carMesh);
+
+carMesh.add(camera)
 
 const wheelGeometry1 = new THREE.SphereGeometry(1);
 const wheelMaterial1 = new THREE.MeshNormalMaterial();
@@ -287,7 +289,6 @@ const wheelMesh4 = new THREE.Mesh(wheelGeometry4, wheelMaterial4);
 scene.add(wheelMesh4);
 
 //new OrbitControls(camera, renderer.domElement);
-camera.lookAt(carMesh.position)
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
 const clock = new THREE.Clock();
@@ -332,11 +333,12 @@ function animate() {
     wheelMesh4.position.copy(utils.copyVector(wheelBody4.position));
     wheelMesh4.quaternion.copy(utils.copyQuaternion(wheelBody4.quaternion));
 
-    gridHelper.position.x += carBody.velocity.x * timeStep
-    gridHelper.position.z += carBody.velocity.z * timeStep
+    // gridHelper.position.x += -(carBody.velocity.x/2) * timeStep
+    // gridHelper.position.z += -(carBody.velocity.z/2) * timeStep
 
-    gridHelper.position.x = gridHelper.position.x % 100
-    gridHelper.position.z = gridHelper.position.z % 100
+    // gridHelper.position.x = (gridHelper.position.x) % 40
+    gridHelper.position.z = (gridHelper.position.z) % 80
+    
     render();
 }
 

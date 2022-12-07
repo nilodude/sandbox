@@ -45,7 +45,7 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNorm
     sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
     sphereFolder.open()
 }
-
+const rotationLimit = 5;
 //CAMERA
 function addCameraFolder(camera: THREE.PerspectiveCamera){
     const cameraFolder = gui.addFolder('Camera')
@@ -53,9 +53,9 @@ function addCameraFolder(camera: THREE.PerspectiveCamera){
     cameraFolder.add(camera.position, 'y', -limit, limit)
     cameraFolder.add(camera.position, 'z', -limit, limit)
     const cameraRotationFolder = cameraFolder.addFolder('Rotation')
-    cameraRotationFolder.add(camera.rotation, 'x', -1, 1, 0.01)
-    cameraRotationFolder.add(camera.rotation, 'y', -1, 1, 0.01)
-    cameraRotationFolder.add(camera.rotation, 'z', -1, 1, 0.01)
+    cameraRotationFolder.add(camera.rotation, 'x', -rotationLimit, rotationLimit, 0.01)
+    cameraRotationFolder.add(camera.rotation, 'y', -rotationLimit, rotationLimit, 0.01)
+    cameraRotationFolder.add(camera.rotation, 'z', -rotationLimit, rotationLimit, 0.01)
     cameraRotationFolder.open();
     cameraFolder.open()
 }
