@@ -191,7 +191,7 @@ let avgSpeed= 0;
 let jumpVelocity = 100
 let jumpReleased = true;
 document.addEventListener('keydown', (event) => {
-    let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 8;
+    let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 10;
     const maxForce = avgSpeed < 30 ? 1200 : 900;
       
     switch (event.key) {
@@ -234,11 +234,28 @@ document.addEventListener('keydown', (event) => {
             }
             break;
         case 'c':
-            if(carMesh.children.some(ch=>ch.type == 'PerspectiveCamera')){
-                carMesh.remove(camera)
+            // if(carMesh.children.some(ch=>ch.type == 'PerspectiveCamera')){
+            //     carMesh.remove(camera)
+            // }else{
+            //     carMesh.add(camera)
+            // }
+            //PRESSING C CHANGES CAMERA POSITION AND ROTATION
+            if (camera.rotation.y != 0) {
+                camera.position.x = 1;
+                camera.position.y = 20;
+                camera.position.z = 58;
+                camera.rotation.x = -.22;
+                camera.rotation.y = 0;
+                camera.rotation.z = 0
             }else{
-                carMesh.add(camera)
+                camera.position.x = -500;
+                camera.position.y = 421//221;
+                camera.position.z = 421//500;
+                camera.rotation.x = -0.51//-.17;
+                camera.rotation.y = -0.62//-.73;
+                camera.rotation.z = -0.29//-.73;
             }
+            break;
         
     }
 });
@@ -311,13 +328,17 @@ document.addEventListener('mousemove', (event) => {
 
 //ELEMENTS
 //camera
-const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
+const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
+
 camera.position.x = 1;
 camera.position.y = 20;
 camera.position.z = 58;
 camera.rotation.x=-.22;
-camera.rotation.y=-0;
+camera.rotation.y=0;
+
 camera.rotation.z=0;
+
+
 GUIUtils.addCameraFolder(camera);
 
 //grid
@@ -386,11 +407,12 @@ const carMaterial = new THREE.MeshPhysicalMaterial({
     clearcoatRoughness: 0.01
  });
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
+spotlight.target = carMesh;
+carMesh.add(camera)
+carMesh.add(spotlight)
+
 scene.add(carMesh);
 
-//wwwwcarMesh.add(camera)
-spotlight.target = carMesh;
-carMesh.add(spotlight)
 const wheelGeometry1 = new THREE.SphereGeometry(1);
 const wheelMaterial1 = new THREE.MeshNormalMaterial();
 const wheelMesh1 = new THREE.Mesh(wheelGeometry1,wheelMaterial1);
