@@ -19,47 +19,63 @@ renderer.setSize(size[0], size[1])
 
 //SCENE
 const scene = new THREE.Scene()
-
+const groundSize = 500;
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
 scene.add(ambientLight)
 
-const spotlight = new THREE.SpotLight(0xffffff, 0.9, 0, 3*Math.PI / 2, 1)
-spotlight.position.set(0, 15, 0)
-spotlight.target.position.set(0, 0, 0)
-
-const spotlight1 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
-spotlight1.position.set(200, 10, 200)
-spotlight1.target.position.set(0, 0, 0)
-const spotlight2 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
-spotlight2.position.set(200, 10, -200)
-spotlight2.target.position.set(0, 0, 0)
-
-const spotlight3 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
-spotlight3.position.set(-200, 10, 200)
-spotlight3.target.position.set(0, 0, 0)
-
-const spotlight4 = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
-spotlight4.position.set(-200, 10, -200)
-spotlight4.target.position.set(0, 0, 0)
-
+const spotlight = new THREE.SpotLight(0x0000ff, 2,500, 3*  Math.PI, 1)
+spotlight.position.set(0, 0.5, 0)
+// spotlight.target.position.set(0, 0, 0)  //para que parezca el faro del coche se deja de apuntar al centro
 spotlight.castShadow = true
 
-spotlight.shadow.camera.near = 1
-spotlight.shadow.camera.far = 1000
-spotlight.shadow.camera.fov = 45
+const numLights = 12;
+const lightsPerSide = numLights/4;
+const spacing = groundSize/lightsPerSide;
 
-spotlight.shadow.bias = -0.0001
-spotlight.shadow.mapSize.width = 2048
-spotlight.shadow.mapSize.height = 2048
+for(let i=0;i<=lightsPerSide;i++){
+    const spotlight1 = new THREE.SpotLight(0xffffff, 2, 0, Math.PI / 8, 1)
+    spotlight1.position.set(groundSize/2, 5,(groundSize/2)-i*spacing ) 
+    spotlight1.target.position.set(0, 0, 0)
+    
+    const spotlight2 = new THREE.SpotLight(0xffffff, 2, 0, Math.PI / 8, 1)
+    spotlight2.position.set(-groundSize/2, 5,(groundSize/2)-i*spacing ) 
+    spotlight2.target.position.set(0, 0, 0)
+    
+    const spotlight3 = new THREE.SpotLight(0xffffff, 2, 0, Math.PI / 8, 1)
+    spotlight3.position.set(-(groundSize/2)+i*spacing, 5,groundSize/2) 
+    spotlight3.target.position.set(0, 0, 0)
+
+    const spotlight4 = new THREE.SpotLight(0xffffff, 2, 0, Math.PI / 8, 1)
+    spotlight4.position.set(-(groundSize/2)+i*spacing, 5,-groundSize/2) 
+    spotlight4.target.position.set(0, 0, 0)
+    
+    scene.add(spotlight1)
+    scene.add(spotlight2)
+    scene.add(spotlight3)
+    scene.add(spotlight4)
+}
+
+const lightsPosition = [{x:groundSize/2, z:groundSize/2},{x:groundSize/2, z:-groundSize/2},{x:-groundSize/2, z:groundSize/2},{x:-groundSize/2, z:-groundSize/2}]
+
+// lightsPosition.forEach(lightPos=>{
+//     const spotlight = new THREE.SpotLight(0xffffff, 0.9, 0, Math.PI / 4, 1)
+//     spotlight.position.set(lightPos.x, 10, lightPos.z)
+//     spotlight.target.position.set(0, 0, 0)
+//     spotlight.castShadow = true
+//     scene.add(spotlight)
+// })
+
+// spotlight.shadow.camera.near = 1
+// spotlight.shadow.camera.far = 1000
+// spotlight.shadow.camera.fov = 45
+
+// spotlight.shadow.bias = -0.0001
+// spotlight.shadow.mapSize.width = 2048
+// spotlight.shadow.mapSize.height = 2048
 scene.add(spotlight)
 
-scene.add(spotlight1)
-scene.add(spotlight2)
-scene.add(spotlight3)
-scene.add(spotlight4)
-
 //GROUND MESH
-const groundGeo = new THREE.PlaneGeometry(500, 500);
+const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
 const groundMat = new THREE.MeshPhysicalMaterial({ 
 	color: 0xff00ff,
 	side: THREE.FrontSide,
@@ -102,7 +118,7 @@ world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace 
 
 const carBody = new CANNON.Body({
     mass: 80,
-    position: new CANNON.Vec3(0, 7, 0),
+    position: new CANNON.Vec3(0, 2, 0),
     shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
 });
 
@@ -168,7 +184,7 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 world.addContactMaterial(groundSphereContactMat);
 
 let avgSpeed= 0;
-let jumpVelocity = 70
+let jumpVelocity = 50
 let jumpReleased = true;
 document.addEventListener('keydown', (event) => {
     let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 8;
@@ -280,7 +296,6 @@ document.addEventListener('mousemove', (event) => {
 })
 
 
-
 //ELEMENTS
 //camera
 const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 1000)
@@ -345,7 +360,8 @@ const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 scene.add(carMesh);
 
 carMesh.add(camera)
-
+spotlight.target = carMesh;
+carMesh.add(spotlight)
 const wheelGeometry1 = new THREE.SphereGeometry(1);
 const wheelMaterial1 = new THREE.MeshNormalMaterial();
 const wheelMesh1 = new THREE.Mesh(wheelGeometry1,wheelMaterial1);
