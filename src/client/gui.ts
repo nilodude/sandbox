@@ -6,7 +6,7 @@ let gui: GUI;
 function startGUI(){
     gui = new GUI()
 }
-const limit = 100;
+const limit = 1000;
 //CUBE FOLDER
 function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>){
     const cubeFolder = gui.addFolder('Cube')

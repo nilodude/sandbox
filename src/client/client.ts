@@ -23,10 +23,7 @@ const groundSize = 1000;
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
 scene.add(ambientLight)
 
-const spotlight = new THREE.SpotLight(0x5522aa, 2,500, 3*  Math.PI, 1)
-spotlight.position.set(0, 0.5, 0)
-// spotlight.target.position.set(0, 0, 0)  //para que parezca el faro del coche se deja de apuntar al centro
-spotlight.castShadow = true
+
 
 
 const rectLight = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
@@ -79,14 +76,7 @@ const lightsPosition = [{x:groundSize/2, z:groundSize/2},{x:groundSize/2, z:-gro
 //     scene.add(spotlight)
 // })
 
-// spotlight.shadow.camera.near = 1
-// spotlight.shadow.camera.far = 1000
-// spotlight.shadow.camera.fov = 45
 
-// spotlight.shadow.bias = -0.0001
-// spotlight.shadow.mapSize.width = 2048
-// spotlight.shadow.mapSize.height = 2048
-scene.add(spotlight)
 
 //GROUND MESH
 const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
@@ -105,7 +95,7 @@ scene.add(groundMesh);
 
 //PHYSICS WORLD
 const world = new CANNON.World({
-    gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
+    gravity: new CANNON.Vec3(0, -20, 0), // m/s²
 })
 //GROUND
 const groundPhysMat = new CANNON.Material();
@@ -198,7 +188,7 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 world.addContactMaterial(groundSphereContactMat);
 
 let avgSpeed= 0;
-let jumpVelocity = 50
+let jumpVelocity = 100
 let jumpReleased = true;
 document.addEventListener('keydown', (event) => {
     let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 8;
@@ -238,12 +228,18 @@ document.addEventListener('keydown', (event) => {
             break;
 
         case ' ':
-        case 'Space':
             if (jumpReleased) {
                 [wheelBody1, wheelBody2, wheelBody3, wheelBody4].forEach(wheel => wheel.velocity.y += jumpVelocity);
                 jumpReleased = false;
             }
             break;
+        case 'c':
+            if(carMesh.children.some(ch=>ch.type == 'PerspectiveCamera')){
+                carMesh.remove(camera)
+            }else{
+                carMesh.add(camera)
+            }
+        
     }
 });
 
@@ -283,12 +279,12 @@ document.addEventListener('keyup', (event) => {
 
 
 document.addEventListener('mousemove', (event) => {
-    console.log(event.offsetX+','+event.offsetY)
-    let mouseX = event.clientX;
-    let mouseY = event.clientY;
     if(air){
+        
+
         // if (event.movementX > 0) {
-            var directionVector = new CANNON.Vec3(0, 0, event.movementX);
+            
+            var directionVector = new CANNON.Vec3(0, 0, event.movementX/10);
 		    var directionVector = carBody.quaternion.vmult( directionVector );
 		    carBody.angularVelocity.set( directionVector.x, directionVector.y, directionVector.z );
 
@@ -306,7 +302,10 @@ document.addEventListener('mousemove', (event) => {
             // carBody.quaternion.z -0.05 //setFromAxisAngle(new CANNON.Vec3(0,0,1),carBody.quaternion.z - 0.01)
        
         // carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,0,1),event.movementX/10)
+        
+
     }
+    //carMesh.add(camera)   
 })
 
 
@@ -358,6 +357,22 @@ const objLoader = new OBJLoader();
     scene.add(monkey);
 }); 
 
+
+//VEHICLE LIGHTS
+const spotlight = new THREE.SpotLight(0x5522aa, 2,500, 3*  Math.PI, 1)
+spotlight.position.set(0, 0.5, 0)
+// spotlight.target.position.set(0, 0, 0)  //para que parezcan neones del coche se deja de apuntar al centro
+spotlight.castShadow = true
+// spotlight.shadow.camera.near = 1
+// spotlight.shadow.camera.far = 1000
+// spotlight.shadow.camera.fov = 45
+
+// spotlight.shadow.bias = -0.0001
+// spotlight.shadow.mapSize.width = 2048
+// spotlight.shadow.mapSize.height = 2048
+scene.add(spotlight)
+
+
 //VEHICLE MESH
 const carGeometry = new THREE.BoxGeometry(8, 1, 16);
 const carMaterial = new THREE.MeshPhysicalMaterial({ 
@@ -373,7 +388,7 @@ const carMaterial = new THREE.MeshPhysicalMaterial({
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 scene.add(carMesh);
 
-carMesh.add(camera)
+//wwwwcarMesh.add(camera)
 spotlight.target = carMesh;
 carMesh.add(spotlight)
 const wheelGeometry1 = new THREE.SphereGeometry(1);
