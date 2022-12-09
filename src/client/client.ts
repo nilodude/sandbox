@@ -177,6 +177,8 @@ vehicle.addWheel({
   direction: down,
 });
 
+let wheelsBody = [wheelBody1,wheelBody2,wheelBody3,wheelBody4]
+
 vehicle.addToWorld(world);
 
 const groundSphereContactMat = new CANNON.ContactMaterial(
@@ -346,7 +348,7 @@ const gridHelper = new THREE.GridHelper(1000, 100, 0x0000ff, 0x808080);
 gridHelper.position.y = 0;
 gridHelper.position.x = 0;
 gridHelper.position.z = -0.1;
-//scene.add(gridHelper);
+// scene.add(gridHelper);
 
 //cube
 const cube = GUIUtils.getWireframeCube()
@@ -408,10 +410,20 @@ const carMaterial = new THREE.MeshPhysicalMaterial({
  });
 const carMesh = new THREE.Mesh(carGeometry, carMaterial);
 spotlight.target = carMesh;
-carMesh.add(camera)
+
+// carMesh.add(camera)
 carMesh.add(spotlight)
 
 scene.add(carMesh);
+
+// let wheelsMesh = [];
+// for(let i=0;i<4;i++){
+//     const wheelGeometry = new THREE.SphereGeometry(1);
+//     const wheelMaterial = new THREE.MeshNormalMaterial();
+//     const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
+//     wheelsMesh.push(wheelMesh);
+//     scene.add(wheelMesh);
+// }
 
 const wheelGeometry1 = new THREE.SphereGeometry(1);
 const wheelMaterial1 = new THREE.MeshNormalMaterial();
@@ -473,6 +485,7 @@ function animate() {
 
     carMesh.position.copy(utils.copyVector(carBody.position));
     carMesh.quaternion.copy(utils.copyQuaternion(carBody.quaternion));
+    
     wheelMesh1.position.copy(utils.copyVector(wheelBody1.position));
     wheelMesh1.quaternion.copy(utils.copyQuaternion(wheelBody1.quaternion));
     wheelMesh2.position.copy(utils.copyVector(wheelBody2.position));
@@ -485,8 +498,8 @@ function animate() {
     avgSpeed = (vehicle.getWheelSpeed(2) +vehicle.getWheelSpeed(3))/2
     air = ![wheelBody1.position.y,wheelBody2.position.y,wheelBody3.position.y,wheelBody4.position.y].some(pos=>pos < 1.0)
     
-    
-
+    camera.lookAt(carMesh.position)
+    camera.position.y = 10 + (Math.abs(carMesh.position.z)+ Math.abs(carMesh.position.x))/10
     // console.log(avgSpeed) 
     // console.log(wheelBody1.position.y) 
     
