@@ -201,7 +201,7 @@ let jumpVelocity = 100
 let jumpReleased = true;
 let cameraMode = 1;
 document.addEventListener('keydown', (event) => {
-    let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 10;
+    let maxSteerVal = avgSpeed > 90 ? Math.PI / 18 :Math.PI / 12;
     const maxForce = avgSpeed < 30 ? 1200 : 900;
       
     switch (event.key) {
@@ -224,6 +224,8 @@ document.addEventListener('keydown', (event) => {
         case 'a':
         case 'ArrowLeft':
             if (!air) {
+                // vehicle.setWheelForce(maxForce, 0);
+                // vehicle.setWheelForce(maxForce, 1);
                 vehicle.setSteeringValue(maxSteerVal, 0);
                 vehicle.setSteeringValue(maxSteerVal, 1);
             }
@@ -232,6 +234,8 @@ document.addEventListener('keydown', (event) => {
         case 'd':
         case 'ArrowRight':
             if (!air) {
+                // vehicle.setWheelForce(maxForce, 0);
+                // vehicle.setWheelForce(maxForce, 1);
                 vehicle.setSteeringValue(-maxSteerVal, 0);
                 vehicle.setSteeringValue(-maxSteerVal, 1);
             }
@@ -273,6 +277,13 @@ document.addEventListener('keydown', (event) => {
                 camera.position.y = 10+(Math.abs(carMesh.position.z)+ Math.abs(carMesh.position.x))/10
             }
             break;
+        case 'r':
+            // carBody.quaternion.set(carBody.quaternion.x,carBody.quaternion.y,carBody.quaternion.z,carBody.quaternion.w);
+            carBody.angularVelocity.set(0,0,0)
+            carBody.quaternion.set(0,0,0,carBody.quaternion.w);
+            carBody.velocity.setZero();
+            carBody.position.setZero();
+
     }
 });
 
@@ -293,12 +304,14 @@ document.addEventListener('keyup', (event) => {
 
         case 'a':
         case 'ArrowLeft':
+                
             vehicle.setSteeringValue(0, 0);
             vehicle.setSteeringValue(0, 1);
             break;
 
         case 'd':
         case 'ArrowRight':
+           
             vehicle.setSteeringValue(0, 0);
             vehicle.setSteeringValue(0, 1);
             break;
@@ -312,7 +325,7 @@ document.addEventListener('keyup', (event) => {
 
 document.addEventListener('mousemove', (event) => {
     if (air) {
-        var directionVector = new CANNON.Vec3(0, 0, event.movementX / 10);
+        var directionVector = new CANNON.Vec3(0, 0, event.movementX / 5 );
         var directionVector = carBody.quaternion.vmult(directionVector);
         carBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
     }
