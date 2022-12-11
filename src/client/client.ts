@@ -325,7 +325,7 @@ document.addEventListener('keyup', (event) => {
 
 document.addEventListener('mousemove', (event) => {
     if (air) {
-        var directionVector = new CANNON.Vec3(0, 0, event.movementX / 5 );
+        var directionVector = new CANNON.Vec3(- event.movementY/ 5, 0, event.movementX / 5 );
         var directionVector = carBody.quaternion.vmult(directionVector);
         carBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
     }
