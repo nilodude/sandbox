@@ -192,6 +192,7 @@ world.addContactMaterial(groundSphereContactMat);
 let avgSpeed= 0;
 let jumpVelocity = 100
 let jumpReleased = true;
+let cameraMode = 1;
 document.addEventListener('keydown', (event) => {
     let maxSteerVal = avgSpeed > 90 ? Math.PI / 16 :Math.PI / 10;
     const maxForce = avgSpeed < 30 ? 1200 : 900;
@@ -242,20 +243,33 @@ document.addEventListener('keydown', (event) => {
             //     carMesh.add(camera)
             // }
             //PRESSING C CHANGES CAMERA POSITION AND ROTATION
-            if (camera.rotation.y != 0) {
+            if (cameraMode == 1) {
+                carMesh.add(camera)
+                cameraMode = 2;
                 camera.position.x = 1;
                 camera.position.y = 20;
                 camera.position.z = 58;
                 camera.rotation.x = -.22;
                 camera.rotation.y = 0;
                 camera.rotation.z = 0
-            }else{
+            }else if (cameraMode == 2){
+                carMesh.remove(camera)
+                cameraMode = 3;
                 camera.position.x = -500;
                 camera.position.y = 421//221;
                 camera.position.z = 421//500;
                 camera.rotation.x = -0.51//-.17;
                 camera.rotation.y = -0.62//-.73;
                 camera.rotation.z = -0.29//-.73;
+            }else{
+                cameraMode = 1;
+                camera.position.x = 1;
+                //camera.position.y = 20;
+                camera.position.z = 58;
+                camera.rotation.x = -.22;
+                camera.rotation.y = 0;
+                camera.rotation.z = 0
+                camera.position.y = 10+(Math.abs(carMesh.position.z)+ Math.abs(carMesh.position.x))/10
             }
             break;
         
@@ -499,10 +513,6 @@ function animate() {
     air = ![wheelBody1.position.y,wheelBody2.position.y,wheelBody3.position.y,wheelBody4.position.y].some(pos=>pos < 1.0)
     
     camera.lookAt(carMesh.position)
-    camera.position.y = 10 + (Math.abs(carMesh.position.z)+ Math.abs(carMesh.position.x))/10
-    // console.log(avgSpeed) 
-    // console.log(wheelBody1.position.y) 
-    
     // gridHelper.position.x += -(carBody.velocity.x/2) * timeStep
     // gridHelper.position.z += -(carBody.velocity.z/2) * timeStep
 
