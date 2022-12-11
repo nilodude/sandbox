@@ -38,6 +38,14 @@ const rectLight2 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
 rectLight2.position.set( 0, 30, -250 );
 rectLight2.lookAt( 0, 0, 0 );
 scene.add( rectLight2 )
+const rectLight3 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
+rectLight3.position.set( 0, 30, -450 );
+rectLight3.lookAt( 0, 0, 0 );
+scene.add( rectLight3 )
+const rectLight4 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
+rectLight4.position.set( 0, 30, 450 );
+rectLight4.lookAt( 0, 0, 0 );
+scene.add( rectLight4 )
 
 const numLights = 12;
 const lightsPerSide = numLights/4;
