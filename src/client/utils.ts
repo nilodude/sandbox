@@ -1,5 +1,6 @@
 import * as CANNON from 'cannon-es'
 import THREE = require('three');
+import * as GUIUtils from '../client/gui'
 
 function copyVector(cannonVec:  CANNON.Vec3 ){
     let threeVec= new THREE.Vector3 ;
@@ -17,11 +18,23 @@ function copyQuaternion(cannonQuat:   CANNON.Quaternion){
     return threeQuat;
 }
 
-function copyPosQuat(input: THREE.Mesh<any,any>){
-    let output = input;
-    output.position.x= input.position.x;
-    output.position.y= input.position.y;
-    output.position.z= input.position.z;
-
+//CUBE
+function getWireframeCube(){
+    const geometry = new THREE.BoxGeometry()
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        wireframe: true,
+    });
+    const cube = new THREE.Mesh(geometry, material)
+    GUIUtils.addCubeFolder(cube);
+    return cube;
 }
-export {copyVector,copyQuaternion}
+//SPHERE
+function getWireframeSphere(){
+    const geometry = new THREE.SphereGeometry()
+    const material = new THREE.MeshNormalMaterial();
+    const sphere = new THREE.Mesh(geometry, material)
+    GUIUtils.addSphereFolder(sphere);
+    return sphere;
+}
+export {copyVector,copyQuaternion, getWireframeCube, getWireframeSphere}

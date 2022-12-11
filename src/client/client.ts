@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GUI } from 'dat.gui'
 import * as GUIUtils from '../client/gui'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as CANNON from 'cannon-es'
@@ -245,11 +244,6 @@ document.addEventListener('keydown', (event) => {
             }
             break;
         case 'c':
-            // if(carMesh.children.some(ch=>ch.type == 'PerspectiveCamera')){
-            //     carMesh.remove(camera)
-            // }else{
-            //     carMesh.add(camera)
-            // }
             //PRESSING C CHANGES CAMERA POSITION AND ROTATION
             if (cameraMode == 1) {
                 carMesh.add(camera)
@@ -272,7 +266,6 @@ document.addEventListener('keydown', (event) => {
             }else{
                 cameraMode = 1;
                 camera.position.x = 1;
-                //camera.position.y = 20;
                 camera.position.z = 58;
                 camera.rotation.x = -.22;
                 camera.rotation.y = 0;
@@ -280,7 +273,6 @@ document.addEventListener('keydown', (event) => {
                 camera.position.y = 10+(Math.abs(carMesh.position.z)+ Math.abs(carMesh.position.x))/10
             }
             break;
-        
     }
 });
 
@@ -318,50 +310,23 @@ document.addEventListener('keyup', (event) => {
     }       
 });
 
-
 document.addEventListener('mousemove', (event) => {
-    if(air){
-        
-
-        // if (event.movementX > 0) {
-            
-            var directionVector = new CANNON.Vec3(0, 0, event.movementX/10);
-		    var directionVector = carBody.quaternion.vmult( directionVector );
-		    carBody.angularVelocity.set( directionVector.x, directionVector.y, directionVector.z );
-
-            //HAY QUE CONSEGUIR QUE GIRE EL VEHICULO SIN LA CAMARA
-            //DESANIDAR CAMARA DE VEHICULO? E IR APLICANDOLE LA POSITION Y QUATERNION DEL CARBODY EN CADA FRAME?
-            var cameradirectionVector = new CANNON.Vec3(0, 0, -event.movementX);
-		    var cameradirectionVector = carBody.quaternion.vmult( directionVector );
-		    // camera.applyQuaternion(new THREE.Quaternion(cameradirectionVector.x, cameradirectionVector.y, cameradirectionVector.z ));
-            // wheelBody1.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody1.quaternion.z + 0.05)
-            // wheelBody2.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody2.quaternion.z + 0.05)
-            // wheelBody3.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody3.quaternion.z + 0.05)
-            // wheelBody4.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), wheelBody4.quaternion.z + 0.05)
-    //    }
-        // if(event.movementX < 0)
-            // carBody.quaternion.z -0.05 //setFromAxisAngle(new CANNON.Vec3(0,0,1),carBody.quaternion.z - 0.01)
-       
-        // carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,0,1),event.movementX/10)
-        
-
+    if (air) {
+        var directionVector = new CANNON.Vec3(0, 0, event.movementX / 10);
+        var directionVector = carBody.quaternion.vmult(directionVector);
+        carBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
     }
-    //carMesh.add(camera)   
 })
-
 
 //ELEMENTS
 //camera
 const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
-
 camera.position.x = 1;
 camera.position.y = 20;
 camera.position.z = 58;
 camera.rotation.x=-.22;
 camera.rotation.y=0;
-
 camera.rotation.z=0;
-
 
 GUIUtils.addCameraFolder(camera);
 
@@ -373,7 +338,7 @@ gridHelper.position.z = -0.1;
 // scene.add(gridHelper);
 
 //cube
-const cube = GUIUtils.getWireframeCube()
+const cube = utils.getWireframeCube()
 cube.position.x = 2;
 cube.position.y = 3;
 cube.position.z = 1;
@@ -381,7 +346,7 @@ cube.add(new THREE.AxesHelper(5))
 scene.add(cube)
 
 //sphere
-const sphere = GUIUtils.getWireframeSphere()
+const sphere = utils.getWireframeSphere()
 sphere.position.x = -2;
 sphere.position.y = 0.5;
 sphere.add(new THREE.AxesHelper(5))
@@ -495,7 +460,7 @@ function animate() {
     // controls.update(dt)
 }
 
-    //sphereBody.quaternion.z += 0.01 *Math.sin(theta);
+    sphereBody.quaternion.z += 0.01 *Math.sin(theta);
 
     //ROTATE VEHICLE WITH MOUSEX AND MOUSEY
 
