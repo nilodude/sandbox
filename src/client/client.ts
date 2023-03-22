@@ -312,7 +312,6 @@ sphere.position.y = 0.5;
 sphere.add(new THREE.AxesHelper(5))
 scene.add(sphere)
 
-
 //MONO
 const objLoader = new OBJLoader();
   objLoader.load('models/mono.obj', (monkey) => {
@@ -344,11 +343,9 @@ vehicleMesh.add(spotlight)
 
 scene.add(vehicleMesh);
 
-
 let wheels: any[]= [];
 
 for(let i=0;i<4;i++){
-    console.table(wheels)
     const wheelGeometry = new THREE.SphereGeometry(1);
     const wheelMaterial = new THREE.MeshNormalMaterial();
     const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);

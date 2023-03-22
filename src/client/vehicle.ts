@@ -8,17 +8,17 @@ let wheelBodies: CANNON.Body[] = [];
 function createVehicleMesh(){
     const vehicleGeometry = new THREE.BoxGeometry(8, 1, 16);
     const vehicleMaterial = new THREE.MeshPhysicalMaterial({ 
-	color: 0xaaaaaa,
-	side: THREE.FrontSide,
-	wireframe: false,
-    roughness: 0.01,
-    metalness: 0.9,
-    reflectivity: 1,
-    clearcoat:1,
-    clearcoatRoughness: 0.01
- });
-vehicleMesh = new THREE.Mesh(vehicleGeometry, vehicleMaterial);
-return vehicleMesh;
+	    color: 0xaaaaaa,
+	    side: THREE.FrontSide,
+	    wireframe: false,
+        roughness: 0.01,
+        metalness: 0.9,
+        reflectivity: 1,
+        clearcoat:1,
+        clearcoatRoughness: 0.01
+    });
+    vehicleMesh = new THREE.Mesh(vehicleGeometry, vehicleMaterial);
+    return vehicleMesh;
 }
 
 function createRigidVehicle(wheelBodyMaterial: CANNON.Material){
@@ -32,16 +32,17 @@ function createRigidVehicle(wheelBodyMaterial: CANNON.Material){
         chassisBody: vehicleBody,
     });
     
+    //WHEELS
     const axisWidth = 8.5;
     const down = new CANNON.Vec3(0, -1, 0);
     const angularDamping = 0.8;
         
-    let wheelPositions =
-        [new CANNON.Vec3(axisWidth / 2, 0, -5),
+    let wheelPositions =[
+        new CANNON.Vec3(axisWidth / 2, 0, -5),
         new CANNON.Vec3(-axisWidth / 2, 0, -5),
         new CANNON.Vec3(axisWidth / 2, 0, 5),
         new CANNON.Vec3(-axisWidth / 2, 0, 5)
-        ];
+    ];
     
     for(let i=0;i<4;i++){
         const wheelBody = new CANNON.Body({
