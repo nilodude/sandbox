@@ -128,7 +128,7 @@ sphereBody.angularDamping = 0.8;
 world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
 
 const carBody = new CANNON.Body({
-    mass: 80,
+    mass: 120,
     position: new CANNON.Vec3(0, 2, 0),
     shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
 });
@@ -210,34 +210,40 @@ document.addEventListener('keydown', (event) => {
             if (!air) {
                 vehicle.setWheelForce(maxForce, 0);
                 vehicle.setWheelForce(maxForce, 1);
+                vehicle.setWheelForce(maxForce/3, 2);
+                vehicle.setWheelForce(maxForce/3, 3);
             }
             break;
 
         case 's':
         case 'ArrowDown':
             if (!air) {
-                vehicle.setWheelForce(-maxForce / 2, 0);
-                vehicle.setWheelForce(-maxForce / 2, 1);
+                vehicle.setWheelForce(-maxForce, 0);
+                vehicle.setWheelForce(-maxForce, 1);
+                vehicle.setWheelForce(-maxForce/3, 2);
+                vehicle.setWheelForce(-maxForce/3, 3);
             }
             break;
 
         case 'a':
         case 'ArrowLeft':
             if (!air) {
-                // vehicle.setWheelForce(maxForce, 0);
-                // vehicle.setWheelForce(maxForce, 1);
                 vehicle.setSteeringValue(maxSteerVal, 0);
                 vehicle.setSteeringValue(maxSteerVal, 1);
+                // vehicle.setWheelForce(maxSteerVal, 2);
+                // vehicle.setWheelForce(maxSteerVal, 3);
+                
             }
             break;
 
         case 'd':
         case 'ArrowRight':
             if (!air) {
-                // vehicle.setWheelForce(maxForce, 0);
-                // vehicle.setWheelForce(maxForce, 1);
                 vehicle.setSteeringValue(-maxSteerVal, 0);
                 vehicle.setSteeringValue(-maxSteerVal, 1);
+                // vehicle.setWheelForce(maxSteerVal, 2);
+                // vehicle.setWheelForce(maxSteerVal, 3);
+               
             }
             break;
 
@@ -279,10 +285,14 @@ document.addEventListener('keydown', (event) => {
             break;
         case 'r':
             // carBody.quaternion.set(carBody.quaternion.x,carBody.quaternion.y,carBody.quaternion.z,carBody.quaternion.w);
+            carBody.position.setZero();
+            carBody.inertia = new CANNON.Vec3(0,0,0);
+            vehicle.setWheelForce(0,0);
+            vehicle.setWheelForce(0,1);
+            carBody.torque.setZero();
             carBody.angularVelocity.set(0,0,0)
             carBody.quaternion.set(0,0,0,carBody.quaternion.w);
             carBody.velocity.setZero();
-            carBody.position.setZero();
 
     }
 });
@@ -294,12 +304,16 @@ document.addEventListener('keyup', (event) => {
         case 'ArrowUp':
             vehicle.setWheelForce(0, 0);
             vehicle.setWheelForce(0, 1);
+            vehicle.setWheelForce(0, 2);
+            vehicle.setWheelForce(0, 3);
             break;
 
         case 's':
         case 'ArrowDown':
-            vehicle.setWheelForce(-0, 0);
+            vehicle.setWheelForce(0, 0);
             vehicle.setWheelForce(0, 1);
+            vehicle.setWheelForce(0, 2);
+            vehicle.setWheelForce(0, 3);
             break;
 
         case 'a':
@@ -307,6 +321,8 @@ document.addEventListener('keyup', (event) => {
                 
             vehicle.setSteeringValue(0, 0);
             vehicle.setSteeringValue(0, 1);
+            // vehicle.setSteeringValue(0, 2);
+            // vehicle.setSteeringValue(0, 3);
             break;
 
         case 'd':
@@ -314,6 +330,8 @@ document.addEventListener('keyup', (event) => {
            
             vehicle.setSteeringValue(0, 0);
             vehicle.setSteeringValue(0, 1);
+            // vehicle.setSteeringValue(0, 2);
+            // vehicle.setSteeringValue(0, 3);
             break;
 
         case ' ':
