@@ -4,6 +4,7 @@ import * as GUIUtils from '../client/gui'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as CANNON from 'cannon-es'
 import * as utils from '../client/utils'
+import * as VEHICLE from '../client/vehicle'
 
 GUIUtils.startGUI();
 
@@ -102,7 +103,7 @@ scene.add(groundMesh);
 
 //PHYSICS WORLD
 const world = new CANNON.World({
-    gravity: new CANNON.Vec3(0, -20, 0), // m/s²
+    gravity: new CANNON.Vec3(0, -50, 0), // m/s²
 })
 //GROUND
 const groundPhysMat = new CANNON.Material();
@@ -415,7 +416,7 @@ scene.add(spotlight)
 
 
 //VEHICLE MESH
-const carGeometry = new THREE.BoxGeometry(8, 1, 16);
+/*const carGeometry = new THREE.BoxGeometry(8, 1, 16);
 const carMaterial = new THREE.MeshPhysicalMaterial({ 
 	color: 0xaaaaaa,
 	side: THREE.FrontSide,
@@ -426,7 +427,8 @@ const carMaterial = new THREE.MeshPhysicalMaterial({
     clearcoat:1,
     clearcoatRoughness: 0.01
  });
-const carMesh = new THREE.Mesh(carGeometry, carMaterial);
+const carMesh = new THREE.Mesh(carGeometry, carMaterial);*/
+const carMesh = VEHICLE.createVehicle();
 spotlight.target = carMesh;
 
 // carMesh.add(camera)
