@@ -4,7 +4,7 @@ import * as GUIUtils from '../client/gui'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as CANNON from 'cannon-es'
 import * as utils from '../client/utils'
-import * as VEHICLE from '../client/vehicle'
+import { Vehicle } from '../client/vehicle'
 
 GUIUtils.startGUI();
 
@@ -20,78 +20,21 @@ renderer.setSize(size[0], size[1])
 //SCENE
 const scene = new THREE.Scene()
 const groundSize = 1000;
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
-scene.add(ambientLight)
+
+//CAMERA
+const camera = utils.addCamera(size);
 
 //LIGHTS
-const rectLight = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-rectLight.position.set( 0, 30, 0 );
-rectLight.lookAt( 0, 0, 0 );
-scene.add( rectLight )
-const rectLight1 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-rectLight1.position.set( 0, 30, 250 );
-rectLight1.lookAt( 0, 0, 0 );
-scene.add( rectLight1 )
-const rectLight2 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-rectLight2.position.set( 0, 30, -250 );
-rectLight2.lookAt( 0, 0, 0 );
-scene.add( rectLight2 )
-const rectLight3 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-rectLight3.position.set( 0, 30, -450 );
-rectLight3.lookAt( 0, 0, 0 );
-scene.add( rectLight3 )
-const rectLight4 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-rectLight4.position.set( 0, 30, 450 );
-rectLight4.lookAt( 0, 0, 0 );
-scene.add( rectLight4 )
-
-const numLights = 12;
-const lightsPerSide = numLights/4;
-const spacing = groundSize/lightsPerSide;
-
-for(let i=0;i<=lightsPerSide;i++){
-    const spotlight1 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
-    spotlight1.position.set(groundSize/2, 5,(groundSize/2)-i*spacing ) 
-    spotlight1.target.position.set(0, 0, 0)
-    
-    const spotlight2 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
-    spotlight2.position.set(-groundSize/2, 5,(groundSize/2)-i*spacing ) 
-    spotlight2.target.position.set(0, 0, 0)
-    
-    const spotlight3 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
-    spotlight3.position.set(-(groundSize/2)+i*spacing, 5,groundSize/2) 
-    spotlight3.target.position.set(0, 0, 0)
-
-    const spotlight4 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
-    spotlight4.position.set(-(groundSize/2)+i*spacing, 5,-groundSize/2) 
-    // spotlight4.target.position.set(0, 0, 0)
-    
-    scene.add(spotlight1)
-    scene.add(spotlight2)
-    scene.add(spotlight3)
-    scene.add(spotlight4)
-}
+utils.addWorldLights(scene, groundSize);
 
 //GROUND MESH
-const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
-const groundMat = new THREE.MeshPhysicalMaterial({ 
-	color: 0xaa00ff,
-	side: THREE.FrontSide,
-	wireframe: false,
-    sheenRoughness: 0.001,
-    roughness: 0.001,
-    metalness: 0.5,
-    reflectivity: 1,
- });
-const groundMesh = new THREE.Mesh(groundGeo, groundMat);
-scene.add(groundMesh);
-
+const groundMesh = utils.addGroundMesh(scene, groundSize);
 
 //PHYSICS WORLD
 const world = new CANNON.World({
     gravity: new CANNON.Vec3(0, -50, 0), // m/s²
 })
-//GROUND
+//GROUND BODY
 const groundPhysMat = new CANNON.Material();
 const groundBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
@@ -112,16 +55,15 @@ const sphereBody = new CANNON.Body({
 sphereBody.linearDamping = 0.31;
 sphereBody.angularDamping = 0.8;
 
-world.addBody(sphereBody); // al añadir el sphereBody al sphereVehicle no hace falta añadirlo al world
+world.addBody(sphereBody);
 
-let vehicle = new VEHICLE.Vehicle();
-vehicle.addWheels(spherePhysMat);
+// VEHICLE
+let vehicle = new Vehicle();
+vehicle.addWheels(scene,spherePhysMat);
+vehicle.setupControls(camera);
+vehicle.addLights(scene);
 vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
-let rigidVehicle = vehicle.rigidVehicle;
-
-rigidVehicle.addToWorld(world);
-
-let air = false;
+vehicle.rigidVehicle.addToWorld(world);
 
 const groundSphereContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
@@ -131,190 +73,15 @@ const groundSphereContactMat = new CANNON.ContactMaterial(
 );
 world.addContactMaterial(groundSphereContactMat);
 
-let avgSpeed= 0;
-let jumpVelocity = 300
-let jumpReleased = true;
-let cameraMode = 1;
-document.addEventListener('keydown', (event) => {
-    let maxSteerVal = avgSpeed > 90 ? Math.PI / 18 :Math.PI / 12;
-    const maxForce = avgSpeed < 30 ? 2200 : 1900;
-      
-    switch (event.key) {
-        case 'w':
-        case 'ArrowUp':
-            if (!air) {
-                rigidVehicle.setWheelForce(maxForce, 0);
-                rigidVehicle.setWheelForce(maxForce, 1);
-                // rigidVehicle.setWheelForce(maxForce/5, 2);
-                // rigidVehicle.setWheelForce(maxForce/5, 3);
-            }
-            break;
-
-        case 's':
-        case 'ArrowDown':
-            if (!air) {
-                rigidVehicle.setWheelForce(-maxForce, 0);
-                rigidVehicle.setWheelForce(-maxForce, 1);
-                // rigidVehicle.setWheelForce(-maxForce/3, 2);
-                // rigidVehicle.setWheelForce(-maxForce/3, 3);
-            }
-            break;
-
-        case 'a':
-        case 'ArrowLeft':
-            if (!air) {
-                rigidVehicle.setSteeringValue(maxSteerVal, 0);
-                rigidVehicle.setSteeringValue(maxSteerVal, 1);
-                // rigidVehicle.setWheelForce(maxSteerVal, 2);
-                // rigidVehicle.setWheelForce(maxSteerVal, 3);
-            }
-            break;
-
-        case 'd':
-        case 'ArrowRight':
-            if (!air) {
-                rigidVehicle.setSteeringValue(-maxSteerVal, 0);
-                rigidVehicle.setSteeringValue(-maxSteerVal, 1);
-                // rigidVehicle.setWheelForce(maxSteerVal, 2);
-                // rigidVehicle.setWheelForce(maxSteerVal, 3);
-            }
-            break;
-
-        case ' ':
-            if (jumpReleased) {
-                rigidVehicle.wheelBodies.forEach(wheel => wheel.velocity.y += jumpVelocity);
-                jumpReleased = false;
-            }
-            break;
-        case 'c':
-            //PRESSING C CHANGES CAMERA POSITION AND ROTATION
-            if (cameraMode == 1) {
-                vehicleMesh.add(camera)
-                cameraMode = 2;
-                camera.position.x = 1;
-                camera.position.y = 20;
-                camera.position.z = 58;
-                camera.rotation.x = -.22;
-                camera.rotation.y = 0;
-                camera.rotation.z = 0
-            }else if (cameraMode == 2){
-                vehicleMesh.remove(camera)
-                cameraMode = 3;
-                camera.position.x = -500;
-                camera.position.y = 421//221;
-                camera.position.z = 421//500;
-                camera.rotation.x = -0.51//-.17;
-                camera.rotation.y = -0.62//-.73;
-                camera.rotation.z = -0.29//-.73;
-            }else{
-                cameraMode = 1;
-                camera.position.x = 1;
-                camera.position.z = 58;
-                camera.rotation.x = -.22;
-                camera.rotation.y = 0;
-                camera.rotation.z = 0
-                camera.position.y = 10+(Math.abs(vehicleMesh.position.z)+ Math.abs(vehicleMesh.position.x))/10
-            }
-            break;
-        case 'r':
-            // vehicleBody.quaternion.set(vehicleBody.quaternion.x,vehicleBody.quaternion.y,vehicleBody.quaternion.z,vehicleBody.quaternion.w);
-            vehicle.vehicleBody.position.setZero();
-            vehicle.vehicleBody.inertia = new CANNON.Vec3(0,0,0);
-            rigidVehicle.setWheelForce(0,0);
-            rigidVehicle.setWheelForce(0,1);
-            vehicle.vehicleBody.torque.setZero();
-            vehicle.vehicleBody.angularVelocity.set(0,0,0)
-            vehicle.vehicleBody.quaternion.set(0,0,0,vehicle.vehicleBody.quaternion.w);
-            vehicle.vehicleBody.velocity.setZero();
-    }
-});
-
-// reset car force to zero when key is released
-document.addEventListener('keyup', (event) => {
-    switch (event.key) {
-        case 'w':
-        case 'ArrowUp':
-            rigidVehicle.setWheelForce(0, 0);
-            rigidVehicle.setWheelForce(0, 1);
-            // rigidVehicle.setWheelForce(0, 2);
-            // rigidVehicle.setWheelForce(0, 3);
-            break;
-
-        case 's':
-        case 'ArrowDown':
-            rigidVehicle.setWheelForce(0, 0);
-            rigidVehicle.setWheelForce(0, 1);
-            // rigidVehicle.setWheelForce(0, 2);
-            // rigidVehicle.setWheelForce(0, 3);
-            break;
-
-        case 'a':
-        case 'ArrowLeft':
-                
-            rigidVehicle.setSteeringValue(0, 0);
-            rigidVehicle.setSteeringValue(0, 1);
-            // rigidVehicle.setSteeringValue(0, 2);
-            // rigidVehicle.setSteeringValue(0, 3);
-            break;
-
-        case 'd':
-        case 'ArrowRight':
-           
-            rigidVehicle.setSteeringValue(0, 0);
-            rigidVehicle.setSteeringValue(0, 1);
-            // rigidVehicle.setSteeringValue(0, 2);
-            // rigidVehicle.setSteeringValue(0, 3);
-            break;
-
-        case ' ':
-        case 'Space':
-            jumpReleased = true;
-            break;
-    }       
-});
-
-document.addEventListener('mousemove', (event) => {
-    const spinMult = 0.5;
-    if (air) {
-        var directionVector = new CANNON.Vec3(- event.movementY* spinMult, 0, event.movementX * spinMult );
-        var directionVector = vehicle.vehicleBody.quaternion.vmult(directionVector);
-        vehicle.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
-    }
-})
-
 //ELEMENTS
-//camera
-const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
-camera.position.x = 1;
-camera.position.y = 20;
-camera.position.z = 58;
-camera.rotation.x=-.22;
-camera.rotation.y=0;
-camera.rotation.z=0;
+//GRID HELPER
+//utils.showGridHelper(scene)
 
-GUIUtils.addCameraFolder(camera);
+//CUBE
+const cube = utils.spawnWireframeCube(scene);
 
-//grid
-const gridHelper = new THREE.GridHelper(1000, 100, 0x0000ff, 0x808080);
-gridHelper.position.y = 0;
-gridHelper.position.x = 0;
-gridHelper.position.z = -0.1;
-// scene.add(gridHelper);
-
-//cube
-const cube = utils.getWireframeCube()
-cube.position.x = 2;
-cube.position.y = 3;
-cube.position.z = 1;
-cube.add(new THREE.AxesHelper(5))
-scene.add(cube)
-
-//sphere
-const sphere = utils.getWireframeSphere()
-sphere.position.x = -2;
-sphere.position.y = 0.5;
-sphere.add(new THREE.AxesHelper(5))
-scene.add(sphere)
+//SHPERE MESH
+const sphereMesh = utils.spawnWireframeSphere(scene)
 
 //MONO
 const objLoader = new OBJLoader();
@@ -330,33 +97,6 @@ const objLoader = new OBJLoader();
     scene.add(monkey);
 }); 
 
-
-//VEHICLE LIGHTS
-const spotlight = new THREE.SpotLight(0x5522aa, 2,500, 3*  Math.PI, 1)
-spotlight.position.set(0, 0.5, 0)
-// spotlight.target.position.set(0, 0, 0)  //para que parezcan neones del coche se deja de apuntar al centro
-spotlight.castShadow = true
-
-scene.add(spotlight)
-
-
-//VEHICLE MESH
-const vehicleMesh = vehicle.vehicleMesh;
-spotlight.target = vehicleMesh;
-vehicleMesh.add(spotlight)
-
-scene.add(vehicleMesh);
-
-let wheels: any[]= [];
-
-for(let i=0;i<4;i++){
-    const wheelGeometry = new THREE.SphereGeometry(1);
-    const wheelMaterial = new THREE.MeshNormalMaterial();
-    const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
-    let wheel = {mesh: wheelMesh, body: vehicle.wheelBodies[i]};
-    wheels.push(wheel);
-    scene.add(wheelMesh);
-}
 
 //new OrbitControls(camera, renderer.domElement);
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
@@ -384,31 +124,32 @@ function animate() {
     // }
     // lastCallTime = time
     // controls.update(dt)
-}
+    }
 
     sphereBody.quaternion.z += 0.01 *Math.sin(theta);
 
     //ROTATE VEHICLE WITH MOUSEX AND MOUSEY
 
-    sphere.position.copy(utils.copyVector(sphereBody.position))
-    sphere.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
+    sphereMesh.position.copy(utils.copyVector(sphereBody.position))
+    sphereMesh.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
 
+    //estas dos se podrian quitar si se crease el mesh con la misma orientacion que el body, la correcta (horizontal)
     groundMesh.position.copy(utils.copyVector(groundBody.position));
     groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
 
-    vehicleMesh.position.copy(utils.copyVector(vehicle.vehicleBody.position));
-    vehicleMesh.quaternion.copy(utils.copyQuaternion(vehicle.vehicleBody.quaternion));
+    vehicle.vehicleMesh.position.copy(utils.copyVector(vehicle.vehicleBody.position));
+    vehicle.vehicleMesh.quaternion.copy(utils.copyQuaternion(vehicle.vehicleBody.quaternion));
     
-    wheels.forEach(wheel=>{
+    vehicle.wheels.forEach(wheel=>{
         wheel.mesh.position.copy(utils.copyVector(wheel.body.position));
         wheel.mesh.quaternion.copy(utils.copyQuaternion(wheel.body.quaternion));
     });
 
-    avgSpeed = (rigidVehicle.getWheelSpeed(2) +rigidVehicle.getWheelSpeed(3))/2
+    vehicle.avgSpeed = (vehicle.rigidVehicle.getWheelSpeed(2) +vehicle.rigidVehicle.getWheelSpeed(3))/2
 
-    air = !wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < 1.0)
+    vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < 1.0)
     
-    camera.lookAt(vehicleMesh.position)
+    camera.lookAt(vehicle.vehicleMesh.position)
     // gridHelper.position.x += -(vehicleBody.velocity.x/2) * timeStep
     // gridHelper.position.z += -(vehicleBody.velocity.z/2) * timeStep
 
