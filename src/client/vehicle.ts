@@ -40,6 +40,14 @@ export class Vehicle {
 
     public avgSpeed: number=0;
 
+    public vehicleCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+
+    
+    constructor(position = new CANNON.Vec3(0, 2, 0)){
+        this.vehicleBody.position = position;
+    }
+
+
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
         //WHEELS
         const down = new CANNON.Vec3(0, -1, 0);
@@ -222,6 +230,10 @@ export class Vehicle {
         spotlight.target = this.vehicleMesh;
         this.vehicleMesh.add(spotlight)
         scene.add(this.vehicleMesh);
+    }
+
+    public addCamera(){
+        // this.vehicleCamera = utils.addCamera(size);
     }
 }
 

@@ -22,7 +22,7 @@ const scene = new THREE.Scene()
 const groundSize = 1000;
 
 //CAMERA
-const camera = utils.addCamera(size);
+const camera = utils.addCamera(size,'vehicle camera');
 
 //LIGHTS
 utils.addWorldLights(scene, groundSize);
@@ -127,9 +127,6 @@ function animate() {
     }
 
     sphereBody.quaternion.z += 0.01 *Math.sin(theta);
-
-    //ROTATE VEHICLE WITH MOUSEX AND MOUSEY
-
     sphereMesh.position.copy(utils.copyVector(sphereBody.position))
     sphereMesh.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
 
@@ -150,6 +147,7 @@ function animate() {
     vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < 1.0)
     
     camera.lookAt(vehicle.vehicleMesh.position)
+    
     // gridHelper.position.x += -(vehicleBody.velocity.x/2) * timeStep
     // gridHelper.position.z += -(vehicleBody.velocity.z/2) * timeStep
 

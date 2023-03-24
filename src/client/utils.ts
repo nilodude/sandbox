@@ -2,8 +2,7 @@ import * as CANNON from 'cannon-es'
 import THREE = require('three');
 import * as GUIUtils from '../client/gui'
 
-function addCamera(size: number[]){
-    
+function addCamera(size: number[],label:string){
     const camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
     camera.position.x = 1;
     camera.position.y = 20;
@@ -12,7 +11,7 @@ function addCamera(size: number[]){
     camera.rotation.y=0;
     camera.rotation.z=0;
     
-    GUIUtils.addCameraFolder(camera);
+    GUIUtils.addCameraFolder(camera,label);
     return camera;
 }
 

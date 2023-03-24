@@ -47,8 +47,8 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNorm
 }
 const rotationLimit = 5;
 //CAMERA
-function addCameraFolder(camera: THREE.PerspectiveCamera){
-    const cameraFolder = gui.addFolder('Camera')
+function addCameraFolder(camera: THREE.PerspectiveCamera, label:string){
+    const cameraFolder = gui.addFolder(label || 'New Camera')
     cameraFolder.add(camera.position, 'x', -limit, limit)
     cameraFolder.add(camera.position, 'y', -limit, limit)
     cameraFolder.add(camera.position, 'z', -limit, limit)
