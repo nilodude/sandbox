@@ -34,8 +34,26 @@ const groundMesh = utils.addGroundMesh(scene, groundSize);
 const world = new CANNON.World({
     gravity: new CANNON.Vec3(0, -50, 0), // m/s²
 })
-//GROUND BODY
+
+//WHEEL PHYSICS MATERIAL
+const wheelPhysMat = new CANNON.Material();
+
+//SPHERE BODY
+const sphereBody = utils.addSphereBody(world,wheelPhysMat);
+
+// VEHICLE
+
+let vehicle = new Vehicle();
+vehicle.addWheels(scene,wheelPhysMat);
+vehicle.setupControls(camera);
+vehicle.addLights(scene);
+vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
+vehicle.rigidVehicle.addToWorld(world);
+
+//GROUND PHYSICS MATERIAL
 const groundPhysMat = new CANNON.Material();
+
+//GROUND BODY
 const groundBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Plane(),
@@ -44,34 +62,25 @@ const groundBody = new CANNON.Body({
 groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
 world.addBody(groundBody)
 
-//SPHERE BODY
-const spherePhysMat = new CANNON.Material();
-const sphereBody = new CANNON.Body({
-  mass: 2, // kg
-  shape: new CANNON.Sphere(1),
-  position: new CANNON.Vec3(8, 10, 0),
-  material: spherePhysMat
-})
-sphereBody.linearDamping = 0.31;
-sphereBody.angularDamping = 0.8;
-
-world.addBody(sphereBody);
-
-// VEHICLE
-let vehicle = new Vehicle();
-vehicle.addWheels(scene,spherePhysMat);
-vehicle.setupControls(camera);
-vehicle.addLights(scene);
-vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
-vehicle.rigidVehicle.addToWorld(world);
-
-const groundSphereContactMat = new CANNON.ContactMaterial(
+// 'WHEEL <-> GROUND' PHYSICS
+const groundWheelContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
-    spherePhysMat,
+    wheelPhysMat,
     {restitution: 0.01, 
     friction: 0.7}
 );
-world.addContactMaterial(groundSphereContactMat);
+world.addContactMaterial(groundWheelContactMat);
+
+// 'VEHICLE <-> GROUND' PHYSICS
+const groundVehicleContactMat = new CANNON.ContactMaterial(
+    groundPhysMat,
+    vehicle.vehicleBody.material? vehicle.vehicleBody.material : new CANNON.Material(),
+    {
+        restitution: 0.01,
+        friction: 0.01
+    }
+);
+world.addContactMaterial(groundVehicleContactMat);
 
 //ELEMENTS
 //GRID HELPER

@@ -137,4 +137,18 @@ function addGroundMesh(scene: THREE.Scene, groundSize: number) {
     scene.add(groundMesh);
     return groundMesh;
 }
-export {addCamera,copyVector,copyQuaternion, spawnWireframeCube, spawnWireframeSphere,showGridHelper, addWorldLights,addGroundMesh}
+
+function addSphereBody(world: CANNON.World,material: CANNON.Material){
+    const sphereBody = new CANNON.Body({
+        mass: 2, // kg
+        shape: new CANNON.Sphere(1),
+        position: new CANNON.Vec3(8, 10, 0),
+        material: material
+      })
+    sphereBody.linearDamping = 0.31;
+    sphereBody.angularDamping = 0.8;
+      
+    world.addBody(sphereBody);
+    return sphereBody;
+}
+export {addCamera,copyVector,copyQuaternion, spawnWireframeCube, spawnWireframeSphere,showGridHelper, addWorldLights,addGroundMesh,addSphereBody}

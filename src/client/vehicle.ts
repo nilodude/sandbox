@@ -18,7 +18,7 @@ export class Vehicle {
     public vehicleBody: CANNON.Body = new CANNON.Body({
         mass: 120,
         position: new CANNON.Vec3(0, 2, 0),
-        shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+        shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)), 
     });
 
     axisWidth: number = 8.5;
@@ -43,10 +43,10 @@ export class Vehicle {
     public vehicleCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
 
     
-    constructor(position = new CANNON.Vec3(0, 2, 0)){
+    constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
+        this.vehicleBody.material = material;
     }
-
 
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
         //WHEELS
