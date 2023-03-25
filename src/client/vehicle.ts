@@ -12,36 +12,27 @@ export class Vehicle {
         clearcoat:1,
         clearcoatRoughness: 0.01
     });
-    
-    public vehicleMesh: THREE.Mesh = new THREE.Mesh(this.vehicleGeometry, this.vehicleMaterial);
-    
-    public vehicleBody: CANNON.Body = new CANNON.Body({
+    public vehicleMesh = new THREE.Mesh(this.vehicleGeometry, this.vehicleMaterial);
+    public vehicleBody = new CANNON.Body({
         mass: 120,
         position: new CANNON.Vec3(0, 2, 0),
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)), 
     });
-
-    axisWidth: number = 8.5;
-    wheelPositions: CANNON.Vec3[] =[
+    axisWidth = 8.5;
+    wheelPositions=[
         new CANNON.Vec3(this.axisWidth / 2, 0, -5),
         new CANNON.Vec3(-this.axisWidth / 2, 0, -5),
         new CANNON.Vec3(this.axisWidth / 2, 0, 5),
         new CANNON.Vec3(-this.axisWidth / 2, 0, 5)
     ];
     public wheelBodies: CANNON.Body[] = [];
-    
     public wheels: any[]= [];
-
     public rigidVehicle: CANNON.RigidVehicle = new CANNON.RigidVehicle({
         chassisBody: this.vehicleBody,
     });
-
     public air: boolean = false;
-
     public avgSpeed: number=0;
-
     public vehicleCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
-
     
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
@@ -52,7 +43,8 @@ export class Vehicle {
         //WHEELS
         const down = new CANNON.Vec3(0, -1, 0);
         const angularDamping = 0.8;
-            
+        const wheelRadius = 2;
+
         let wheelPositions =[
             new CANNON.Vec3(this.axisWidth / 2, 0, -5),
             new CANNON.Vec3(-this.axisWidth / 2, 0, -5),
@@ -64,7 +56,7 @@ export class Vehicle {
             const wheelBody = new CANNON.Body({
                 mass: 3, //kg
                 angularDamping: angularDamping,
-                shape: new CANNON.Sphere(1),
+                shape: new CANNON.Sphere(wheelRadius),
                 material: wheelBodyMaterial // este spherePhysMat (o como se llame en cada sitio, wheelBodyMaterial) es el que se va a asociar con el groundPhysMat para definir la fisica del contacto entre esos dos materiales
             });
             
@@ -77,7 +69,7 @@ export class Vehicle {
                 direction: down,
             });
 
-            const wheelGeometry = new THREE.SphereGeometry(1);
+            const wheelGeometry = new THREE.SphereGeometry(wheelRadius);
             const wheelMaterial = new THREE.MeshNormalMaterial();
             const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
@@ -236,5 +228,3 @@ export class Vehicle {
         // this.vehicleCamera = utils.addCamera(size);
     }
 }
-
-
