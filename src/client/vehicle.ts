@@ -39,7 +39,8 @@ export class Vehicle {
     public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
     public cameraMode = 1;
     private mouseClicked = false;
-    
+    public shouldUpdateHUD = false;
+
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
         this.vehicleBody.material = material;
@@ -57,7 +58,6 @@ export class Vehicle {
         GUIUtils.addCameraFolder(this.camera,label);
         return this.camera;
     }
-
 
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
         //WHEELS
@@ -99,7 +99,7 @@ export class Vehicle {
     }
 
     public setupControls() {
-        let jumpVelocity = 400
+        let jumpVelocity = 350
         let jumpReleased = true;
         
         document.addEventListener('keydown', (event) => {
@@ -145,39 +145,47 @@ export class Vehicle {
                         jumpReleased = false;
                     }
                     break;
-                case 'c':
-                    //PRESSING C CHANGES CAMERA POSITION AND ROTATION
-                    if (this.cameraMode == 1) {
-                        // this.vehicleMesh.add(this.camera)
-                        this.cameraMode = 2;
-                        this.camera.position.x = 1;
-                        this.camera.position.y = 20;
-                        this.camera.position.z = 78;
-                        this.camera.rotation.x = -.22;
-                        this.camera.rotation.y = 0;
-                        this.camera.rotation.z = 0
-                    } else if (this.cameraMode == 2) {
-                        // this.vehicleMesh.remove(this.camera)
-                        this.cameraMode = 3;
-                        this.camera.position.x = -500;
-                        this.camera.position.y = 421//221;
-                        this.camera.position.z = 421//500;
-                        this.camera.rotation.x = -0.51//-.17;
-                        this.camera.rotation.y = -0.62//-.73;
-                        this.camera.rotation.z = -0.29//-.73;
-                    } else if (this.cameraMode == 3){
-                        this.cameraMode = 1;
-                        this.camera.position.x = 1;
-                        this.camera.position.y = 20+ Math.sign(this.vehicleBody.position.z)*(this.vehicleBody.position.z/50);;
-                        this.camera.position.z = 78;
-                        this.camera.rotation.x = -.22;
-                        this.camera.rotation.y = 0;
-                        this.camera.rotation.z = 0
-                        
-                    }
+                case '1':
+                    this.shouldUpdateHUD = this.cameraMode != 1;
+                    this.cameraMode = 1;
+                    this.camera.position.x = 1;
+                    this.camera.position.y = 20+ Math.sign(this.vehicleBody.position.z)*(this.vehicleBody.position.z/50);;
+                    this.camera.position.z = 78;
+                    this.camera.rotation.x = -.22;
+                    this.camera.rotation.y = 0;
+                    this.camera.rotation.z = 0
+                    break;
+                case '2':
+                    this.shouldUpdateHUD = this.cameraMode !=  2;
+                    this.cameraMode = 2;
+                    this.camera.position.x = 1;
+                    this.camera.position.y = 20;
+                    this.camera.position.z = 78;
+                    this.camera.rotation.x = -.22;
+                    this.camera.rotation.y = 0;
+                    this.camera.rotation.z = 0
+                    break;
+                case '3':
+                    this.shouldUpdateHUD = this.cameraMode != 3;
+                    this.cameraMode = 3;
+                    this.camera.position.x = 1;
+                    this.camera.position.y = 20;
+                    this.camera.position.z = 78;
+                    this.camera.rotation.x = -.22;
+                    this.camera.rotation.y = 0;
+                    this.camera.rotation.z = 0
+                    break;    
+                case '4':
+                    this.shouldUpdateHUD = this.cameraMode !=  4;
+                    this.cameraMode = 4;
+                    this.camera.position.x = -500;
+                    this.camera.position.y = 421;
+                    this.camera.position.z = 421;
+                    this.camera.rotation.x = -0.51;
+                    this.camera.rotation.y = -0.62;
+                    this.camera.rotation.z = -0.29;
                     break;
                 case 'r':
-                    // vehicleBody.quaternion.set(vehicleBody.quaternion.x,vehicleBody.quaternion.y,vehicleBody.quaternion.z,vehicleBody.quaternion.w);
                     this.vehicleBody.position.setZero();
                     this.vehicleBody.inertia = new CANNON.Vec3(0, 0, 0);
                     this.rigidVehicle.setWheelForce(0, 0);
@@ -186,6 +194,7 @@ export class Vehicle {
                     this.vehicleBody.angularVelocity.set(0, 0, 0)
                     this.vehicleBody.quaternion.set(0, 0, 0, this.vehicleBody.quaternion.w);
                     this.vehicleBody.velocity.setZero();
+                    break;
             }
         });
 
@@ -228,18 +237,13 @@ export class Vehicle {
             this.mouseClicked = !(this.mouseClicked && event.button === 0);
         })
 
-
         document.addEventListener('mousemove', (event) => {
             const spinMult = 0.5;
-            // console.log(event)
-            // console.table([this.air,event.movementX,event.movementY]);
             if (this.air && this.mouseClicked) {
-                // this.vehicleMesh.remove(this.camera)
                 var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
                 var directionVector = this.vehicleBody.quaternion.vmult(directionVector);
                 this.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
                 this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
-                //this.vehicleMesh.add(this.camera)
             }
         })
     }
@@ -277,13 +281,16 @@ export class Vehicle {
             this.camera.position.y = 20 + (sign * (zpos));
         } else if (this.cameraMode == 2) {
             let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,0,this.vehicleBody.velocity.z).length()/85;
-            // let magnitude = this.vehicleBody.velocity.length()/85;
-            // let magnitude = 1;
+         
             this.camera.position.x = this.vehicleMesh.position.x - this.vehicleBody.velocity.x/magnitude;
             this.camera.position.y = this.vehicleMesh.position.y + 20;
             this.camera.position.z = this.vehicleMesh.position.z - this.vehicleBody.velocity.z/magnitude;
+        }else if(this.cameraMode == 3){
+            this.camera.position.x = this.vehicleMesh.position.x;
+            this.camera.position.y = this.vehicleMesh.position.y + 20;
+            this.camera.position.z = this.vehicleMesh.position.z + 78;
         }
 
-        this.camera.lookAt(this.vehicleMesh.position)
+        this.camera.lookAt(this.vehicleMesh.position);
     }
 }

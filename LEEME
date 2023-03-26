@@ -1,0 +1,12 @@
+26/03/23:
+    -could add more cameramodes
+
+    -need to initialize all vehicle props through constructor?
+
+    -somethings slightly wrong when landing upside down, wheel positions gets twisted
+
+    -need to make wheels cylinder shaped and different colour each one
+
+    -need to plot HUD with controls
+
+    -el juego del skate puede tener pelotas por ahi y al darle golpes salen volando y si caen encima de la tabla ganas mas puntos

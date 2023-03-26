@@ -42,7 +42,6 @@ const wheelPhysMat = new CANNON.Material();
 const sphereBody = utils.addSphereBody(world,wheelPhysMat);
 
 // VEHICLE
-
 let vehicle = new Vehicle();
 vehicle.addWheels(scene,wheelPhysMat);
 vehicle.setupControls();
@@ -50,6 +49,7 @@ vehicle.addLights(scene);
 vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
 vehicle.rigidVehicle.addToWorld(world);
 vehicle.addCamera(size,'vehicle camera');
+
 //GROUND PHYSICS MATERIAL
 const groundPhysMat = new CANNON.Material();
 
@@ -106,11 +106,35 @@ const objLoader = new OBJLoader();
     scene.add(monkey);
 }); 
 
-
 //new OrbitControls(camera, renderer.domElement);
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
-const clock = new THREE.Clock();
+//HUD
+let HUD = document.createElement('div');
+let cameraHUD = document.createElement('div');
+let cameraHUDlabel = document.createElement('div');
+let cameraHUDvalue = document.createElement('div');
+
+cameraHUDlabel.innerHTML = 'SWITCH CAMERA:  1  |  2  |  3  |  4';
+cameraHUDlabel.style.position = 'absolute';
+cameraHUDlabel.style.top = '2%';
+cameraHUDlabel.style.left = '2%';
+cameraHUDlabel.style.color = 'antiquewhite';
+cameraHUDlabel.style.fontFamily= 'monospace';
+
+cameraHUDvalue.innerHTML = 'CAMERA '+vehicle.cameraMode;
+cameraHUDvalue.style.position = 'absolute';
+cameraHUDvalue.style.top = '5%';
+cameraHUDvalue.style.left = '5%';
+cameraHUDvalue.style.color = cameraHUDlabel.style.color;
+cameraHUDvalue.style.fontFamily= cameraHUDlabel.style.fontFamily;
+
+cameraHUD.appendChild(cameraHUDlabel);
+cameraHUD.appendChild(cameraHUDvalue);
+
+HUD.appendChild(cameraHUD);
+document.body.appendChild(HUD);
+
 //each ANIMATION frame gets calculated
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
@@ -120,11 +144,13 @@ function animate() {
     theta += 0.1;
     cube.rotation.y += 0.01 *Math.sin(theta);
 
+    requestAnimationFrame(animate)
+
     //fixedStep is independent from frameRate
     // world.fixedStep(timeStep)
-    requestAnimationFrame(animate)
+    
+    //step depends on last call time
     //passing the time since last call
-    {
     const time = performance.now() / 1000 // seconds
     if (!lastCallTime) {
         world.step(timeStep)
@@ -133,9 +159,7 @@ function animate() {
         world.step(timeStep, dt)
     }
     lastCallTime = time
-    // controls.update(dt)
-    }
-
+    
     sphereBody.quaternion.z += 0.01 *Math.sin(theta);
     sphereMesh.position.copy(utils.copyVector(sphereBody.position))
     sphereMesh.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
@@ -146,6 +170,19 @@ function animate() {
 
     vehicle.updatePosition();
 
+    //UPDATE HUD
+    if (vehicle.shouldUpdateHUD) {
+        vehicle.shouldUpdateHUD = false;
+        cameraHUD.removeChild(cameraHUDvalue);
+        HUD.removeChild(cameraHUD);
+        document.body.removeChild(HUD);
+
+        cameraHUDvalue.innerHTML = 'CAMERA ' + vehicle.cameraMode;
+
+        cameraHUD.appendChild(cameraHUDvalue)
+        HUD.appendChild(cameraHUD);
+        document.body.appendChild(HUD);
+    }
     render();
 }
 
