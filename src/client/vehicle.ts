@@ -19,6 +19,7 @@ export class Vehicle {
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)), 
     });
     axisWidth = 8.5;
+    public wheelRadius = 2;
     wheelPositions=[
         new CANNON.Vec3(this.axisWidth / 2, 0, -5),
         new CANNON.Vec3(-this.axisWidth / 2, 0, -5),
@@ -33,7 +34,8 @@ export class Vehicle {
     public air: boolean = false;
     public avgSpeed: number=0;
     public vehicleCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
-    
+    private mouseClicked = false;
+
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
         this.vehicleBody.material = material;
@@ -43,7 +45,7 @@ export class Vehicle {
         //WHEELS
         const down = new CANNON.Vec3(0, -1, 0);
         const angularDamping = 0.8;
-        const wheelRadius = 2;
+        this.wheelRadius = 1;
 
         let wheelPositions =[
             new CANNON.Vec3(this.axisWidth / 2, 0, -5),
@@ -56,7 +58,7 @@ export class Vehicle {
             const wheelBody = new CANNON.Body({
                 mass: 3, //kg
                 angularDamping: angularDamping,
-                shape: new CANNON.Sphere(wheelRadius),
+                shape: new CANNON.Sphere(this.wheelRadius),
                 material: wheelBodyMaterial // este spherePhysMat (o como se llame en cada sitio, wheelBodyMaterial) es el que se va a asociar con el groundPhysMat para definir la fisica del contacto entre esos dos materiales
             });
             
@@ -69,7 +71,7 @@ export class Vehicle {
                 direction: down,
             });
 
-            const wheelGeometry = new THREE.SphereGeometry(wheelRadius);
+            const wheelGeometry = new THREE.SphereGeometry(this.wheelRadius);
             const wheelMaterial = new THREE.MeshNormalMaterial();
             const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
@@ -200,10 +202,20 @@ export class Vehicle {
             }
         });
 
+        document.addEventListener('mousedown',(event)=>{
+            this.mouseClicked = event.button === 0;
+        })
+        document.addEventListener('mouseup',(event)=>{
+            this.mouseClicked = !(this.mouseClicked && event.button === 0);
+        })
+
+
         document.addEventListener('mousemove', (event) => {
             const spinMult = 0.5;
-            if (this.air) {
-                var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, event.movementX * spinMult);
+            // console.log(event)
+            // console.table([this.air,event.movementX,event.movementY]);
+            if (this.air && this.mouseClicked) {
+                var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
                 var directionVector = this.vehicleBody.quaternion.vmult(directionVector);
                 this.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
             }

@@ -153,7 +153,7 @@ function animate() {
 
     vehicle.avgSpeed = (vehicle.rigidVehicle.getWheelSpeed(2) +vehicle.rigidVehicle.getWheelSpeed(3))/2
 
-    vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < 1.0)
+    vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < vehicle.wheelRadius)
     
     camera.lookAt(vehicle.vehicleMesh.position)
     
