@@ -156,29 +156,40 @@ function animate() {
 
     vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < vehicle.wheelRadius)
     
-    
-    vehicle.camera.lookAt(vehicle.vehicleMesh.position)
-
-    
     if(vehicle.cameraMode === 1){
         let zpos=vehicle.vehicleBody.position.z/10;
         let sign = Math.sign(vehicle.vehicleBody.position.z/10);
         
         vehicle.camera.position.y = 20 + (sign*(zpos));
-    }
-    if(vehicle.cameraMode ==2){
+    }else if(vehicle.cameraMode ==2){
         // NEED TO COHERENTLY MAP VEHICLE 'Y' ROTATION/VELOCITY? TO CAMERA XZ POSITION
-        // CAMERA 'Y' ROTATION AUTOMATICALLY WITH 'lootAt'
-        vehicle.camera.position.x = vehicle.vehicleMesh.position.x + 1;
-        vehicle.camera.position.y = vehicle.vehicleMesh.position.y + 20 ;
-        vehicle.camera.position.z = vehicle.vehicleMesh.position.z + 78;
+        // MAYBE NOT CAMERA 'Y' ROTATION AUTOMATICALLY WITH 'lootAt'
+        let plusX = Math.sign(vehicle.vehicleMesh.position.x) == 1;
+        let minusX = Math.sign(vehicle.vehicleMesh.position.x) == -1;
+
+        let plusZ = Math.sign(vehicle.vehicleMesh.position.z) == 1;
+        let minusZ = Math.sign(vehicle.vehicleMesh.position.z) == -1;
+
+        if(minusX && minusZ){
+            // vehicle.camera.position.x = vehicle.vehicleMesh.position.x
+
+        }else if(plusX && minusZ){
+            //completar
+        }else if(minusX && plusZ){
+            
+        }else if(plusX && plusZ){
+            
+        }
+
+        //THIS NEARLY GOT IT, LOOKAT MADE THE THING WORK
+        // vehicle.camera.quaternion.rotateTowards(utils.copyQuaternion(vehicle.vehicleBody.quaternion), 0.1)
         
-
-        //NOT WORKING
-        // vehicle.camera.rotateY(vehicle.vehicleMesh.rotation.y)
-        // console.log(360*vehicle.vehicleMesh.rotation.y/(2*Math.PI))
+        //THIS MADE THE THING WORK. VECTOR SUBSTRACTION AT ITS FINEST.
+        vehicle.camera.position.x = vehicle.vehicleMesh.position.x - vehicle.vehicleBody.velocity.x;
+        vehicle.camera.position.y = vehicle.vehicleMesh.position.y+20;
+        vehicle.camera.position.z = vehicle.vehicleMesh.position.z - vehicle.vehicleBody.velocity.z;
     }
-
+    
     vehicle.camera.lookAt(vehicle.vehicleMesh.position)
 
     // gridHelper.position.x += -(vehicleBody.velocity.x/2) * timeStep

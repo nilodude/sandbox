@@ -53,9 +53,9 @@ function addCameraFolder(camera: THREE.PerspectiveCamera, label:string){
     cameraFolder.add(camera.position, 'y', -limit, limit)
     cameraFolder.add(camera.position, 'z', -limit, limit)
     const cameraRotationFolder = cameraFolder.addFolder('Rotation')
-    cameraRotationFolder.add(camera.rotation, 'x', -rotationLimit, rotationLimit, 0.01)
-    cameraRotationFolder.add(camera.rotation, 'y', -rotationLimit, rotationLimit, 0.01)
-    cameraRotationFolder.add(camera.rotation, 'z', -rotationLimit, rotationLimit, 0.01)
+    cameraRotationFolder.add(camera.rotation, 'x', 0,  Math.PI * 2)
+    cameraRotationFolder.add(camera.rotation, 'y', 0,  Math.PI * 2)
+    cameraRotationFolder.add(camera.rotation, 'z',  0,  Math.PI * 2)
     // cameraRotationFolder.open();
     // cameraFolder.open()
 }
