@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
+import * as GUIUtils from '../client/gui'
+
 export class Vehicle {
     vehicleGeometry: THREE.BoxGeometry = new THREE.BoxGeometry(8, 1, 16);
     vehicleMaterial: THREE.MeshPhysicalMaterial = new THREE.MeshPhysicalMaterial({ 
@@ -33,13 +35,28 @@ export class Vehicle {
     });
     public air: boolean = false;
     public avgSpeed: number=0;
-    public vehicleCamera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+    public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
+    public cameraMode = 1;
     private mouseClicked = false;
-
+    
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
         this.vehicleBody.material = material;
     }
+
+    public addCamera(size: number[],label:string){
+        this.camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
+        this.camera.position.x = 1;
+        this.camera.position.y = 20 + (Math.abs(this.vehicleMesh.position.z) + Math.abs(this.vehicleMesh.position.x)) / 2
+        this.camera.position.z = 78;
+        this.camera.rotation.x=-.22;
+        this.camera.rotation.y=0;
+        this.camera.rotation.z=0;
+        
+        GUIUtils.addCameraFolder(this.camera,label);
+        return this.camera;
+    }
+
 
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
         //WHEELS
@@ -74,19 +91,19 @@ export class Vehicle {
             const wheelGeometry = new THREE.SphereGeometry(this.wheelRadius);
             const wheelMaterial = new THREE.MeshNormalMaterial();
             const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
+            wheelMesh.scale.x = 0.5;
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
             scene.add(wheelMesh);
         }
     }
 
-    public setupControls(camera: THREE.PerspectiveCamera) {
+    public setupControls() {
         let jumpVelocity = 300
         let jumpReleased = true;
-        let cameraMode = 1;
         
         document.addEventListener('keydown', (event) => {
             let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 18 : Math.PI / 12;
-            const maxForce = this.avgSpeed < 30 ? 2200 : 1900;
+            const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
 
             switch (event.key) {
                 case 'w':
@@ -129,32 +146,33 @@ export class Vehicle {
                     break;
                 case 'c':
                     //PRESSING C CHANGES CAMERA POSITION AND ROTATION
-                    if (cameraMode == 1) {
-                        this.vehicleMesh.add(camera)
-                        cameraMode = 2;
-                        camera.position.x = 1;
-                        camera.position.y = 20;
-                        camera.position.z = 58;
-                        camera.rotation.x = -.22;
-                        camera.rotation.y = 0;
-                        camera.rotation.z = 0
-                    } else if (cameraMode == 2) {
-                        this.vehicleMesh.remove(camera)
-                        cameraMode = 3;
-                        camera.position.x = -500;
-                        camera.position.y = 421//221;
-                        camera.position.z = 421//500;
-                        camera.rotation.x = -0.51//-.17;
-                        camera.rotation.y = -0.62//-.73;
-                        camera.rotation.z = -0.29//-.73;
-                    } else {
-                        cameraMode = 1;
-                        camera.position.x = 1;
-                        camera.position.z = 58;
-                        camera.rotation.x = -.22;
-                        camera.rotation.y = 0;
-                        camera.rotation.z = 0
-                        camera.position.y = 10 + (Math.abs(this.vehicleMesh.position.z) + Math.abs(this.vehicleMesh.position.x)) / 10
+                    if (this.cameraMode == 1) {
+                        // this.vehicleMesh.add(this.camera)
+                        this.cameraMode = 2;
+                        this.camera.position.x = 1;
+                        this.camera.position.y = 20;
+                        this.camera.position.z = 78;
+                        this.camera.rotation.x = -.22;
+                        this.camera.rotation.y = 0;
+                        this.camera.rotation.z = 0
+                    } else if (this.cameraMode == 2) {
+                        // this.vehicleMesh.remove(this.camera)
+                        this.cameraMode = 3;
+                        this.camera.position.x = -500;
+                        this.camera.position.y = 421//221;
+                        this.camera.position.z = 421//500;
+                        this.camera.rotation.x = -0.51//-.17;
+                        this.camera.rotation.y = -0.62//-.73;
+                        this.camera.rotation.z = -0.29//-.73;
+                    } else if (this.cameraMode == 3){
+                        this.cameraMode = 1;
+                        this.camera.position.x = 1;
+                        this.camera.position.y = 20+ Math.sign(this.vehicleBody.position.z)*(this.vehicleBody.position.z/50);;
+                        this.camera.position.z = 78;
+                        this.camera.rotation.x = -.22;
+                        this.camera.rotation.y = 0;
+                        this.camera.rotation.z = 0
+                        
                     }
                     break;
                 case 'r':
@@ -215,10 +233,12 @@ export class Vehicle {
             // console.log(event)
             // console.table([this.air,event.movementX,event.movementY]);
             if (this.air && this.mouseClicked) {
+                // this.vehicleMesh.remove(this.camera)
                 var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
                 var directionVector = this.vehicleBody.quaternion.vmult(directionVector);
                 this.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
                 this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
+                //this.vehicleMesh.add(this.camera)
             }
         })
     }
@@ -237,7 +257,4 @@ export class Vehicle {
         scene.add(this.vehicleMesh);
     }
 
-    public addCamera(){
-        // this.vehicleCamera = utils.addCamera(size);
-    }
 }

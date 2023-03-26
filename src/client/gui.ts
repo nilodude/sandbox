@@ -24,7 +24,7 @@ function addCubeFolder(cube: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMateri
     cubeScaleFolder.add(cube.scale, 'x', -15, 15)
     cubeScaleFolder.add(cube.scale, 'y', -15, 15)
     cubeScaleFolder.add(cube.scale, 'z', -35, 35)
-    cubeFolder.open()
+    // cubeFolder.open()
 }
 //SPHERE FOLDER
 function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNormalMaterial>){
@@ -43,7 +43,7 @@ function addSphereFolder(sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshNorm
     sphereScaleFolder.add(sphere.scale, 'x', -15, 15)
     sphereScaleFolder.add(sphere.scale, 'y', -15, 15)
     sphereScaleFolder.add(sphere.scale, 'z', -35, 35)
-    sphereFolder.open()
+    // sphereFolder.open()
 }
 const rotationLimit = 5;
 //CAMERA
@@ -56,8 +56,8 @@ function addCameraFolder(camera: THREE.PerspectiveCamera, label:string){
     cameraRotationFolder.add(camera.rotation, 'x', -rotationLimit, rotationLimit, 0.01)
     cameraRotationFolder.add(camera.rotation, 'y', -rotationLimit, rotationLimit, 0.01)
     cameraRotationFolder.add(camera.rotation, 'z', -rotationLimit, rotationLimit, 0.01)
-    cameraRotationFolder.open();
-    cameraFolder.open()
+    // cameraRotationFolder.open();
+    // cameraFolder.open()
 }
 
 

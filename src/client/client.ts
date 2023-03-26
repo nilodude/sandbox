@@ -22,7 +22,7 @@ const scene = new THREE.Scene()
 const groundSize = 1000;
 
 //CAMERA
-const camera = utils.addCamera(size,'vehicle camera');
+// const camera = utils.addCamera(size,'vehicle camera');
 
 //LIGHTS
 utils.addWorldLights(scene, groundSize);
@@ -45,11 +45,11 @@ const sphereBody = utils.addSphereBody(world,wheelPhysMat);
 
 let vehicle = new Vehicle();
 vehicle.addWheels(scene,wheelPhysMat);
-vehicle.setupControls(camera);
+vehicle.setupControls();
 vehicle.addLights(scene);
 vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
 vehicle.rigidVehicle.addToWorld(world);
-
+vehicle.addCamera(size,'vehicle camera');
 //GROUND PHYSICS MATERIAL
 const groundPhysMat = new CANNON.Material();
 
@@ -146,6 +146,7 @@ function animate() {
     vehicle.vehicleMesh.position.copy(utils.copyVector(vehicle.vehicleBody.position));
     vehicle.vehicleMesh.quaternion.copy(utils.copyQuaternion(vehicle.vehicleBody.quaternion));
     
+   
     vehicle.wheels.forEach(wheel=>{
         wheel.mesh.position.copy(utils.copyVector(wheel.body.position));
         wheel.mesh.quaternion.copy(utils.copyQuaternion(wheel.body.quaternion));
@@ -155,19 +156,41 @@ function animate() {
 
     vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < vehicle.wheelRadius)
     
-    camera.lookAt(vehicle.vehicleMesh.position)
     
+    vehicle.camera.lookAt(vehicle.vehicleMesh.position)
+
+    
+    if(vehicle.cameraMode === 1){
+        let zpos=vehicle.vehicleBody.position.z/10;
+        let sign = Math.sign(vehicle.vehicleBody.position.z/10);
+        
+        vehicle.camera.position.y = 20 + (sign*(zpos));
+    }
+    if(vehicle.cameraMode ==2){
+        // NEED TO COHERENTLY MAP VEHICLE 'Y' ROTATION/VELOCITY? TO CAMERA XZ POSITION
+        // CAMERA 'Y' ROTATION AUTOMATICALLY WITH 'lootAt'
+        vehicle.camera.position.x = vehicle.vehicleMesh.position.x + 1;
+        vehicle.camera.position.y = vehicle.vehicleMesh.position.y + 20 ;
+        vehicle.camera.position.z = vehicle.vehicleMesh.position.z + 78;
+        
+
+        //NOT WORKING
+        // vehicle.camera.rotateY(vehicle.vehicleMesh.rotation.y)
+        // console.log(360*vehicle.vehicleMesh.rotation.y/(2*Math.PI))
+    }
+
+    vehicle.camera.lookAt(vehicle.vehicleMesh.position)
+
     // gridHelper.position.x += -(vehicleBody.velocity.x/2) * timeStep
     // gridHelper.position.z += -(vehicleBody.velocity.z/2) * timeStep
 
     // gridHelper.position.x = (gridHelper.position.x) % 40
     // gridHelper.position.z = (gridHelper.position.z) % 80
-    
     render();
 }
 
 function render() {
-    renderer.render(scene, camera)
+    renderer.render(scene, vehicle.camera)
 }
 
 animate()
