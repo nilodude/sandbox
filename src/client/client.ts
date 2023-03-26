@@ -121,17 +121,18 @@ function animate() {
     cube.rotation.y += 0.01 *Math.sin(theta);
 
     //fixedStep is independent from frameRate
-    world.fixedStep(timeStep)
+    // world.fixedStep(timeStep)
     requestAnimationFrame(animate)
     //passing the time since last call
-    {// const time = performance.now() / 1000 // seconds
-    // if (!lastCallTime) {
-    //     world.step(timeStep)
-    // } else {
-    //     const dt = time - lastCallTime
-    //     world.step(timeStep, dt)
-    // }
-    // lastCallTime = time
+    {
+    const time = performance.now() / 1000 // seconds
+    if (!lastCallTime) {
+        world.step(timeStep)
+    } else {
+        const dt = time - lastCallTime
+        world.step(timeStep, dt)
+    }
+    lastCallTime = time
     // controls.update(dt)
     }
 
@@ -143,60 +144,8 @@ function animate() {
     groundMesh.position.copy(utils.copyVector(groundBody.position));
     groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
 
-    vehicle.vehicleMesh.position.copy(utils.copyVector(vehicle.vehicleBody.position));
-    vehicle.vehicleMesh.quaternion.copy(utils.copyQuaternion(vehicle.vehicleBody.quaternion));
-    
-   
-    vehicle.wheels.forEach(wheel=>{
-        wheel.mesh.position.copy(utils.copyVector(wheel.body.position));
-        wheel.mesh.quaternion.copy(utils.copyQuaternion(wheel.body.quaternion));
-    });
+    vehicle.updatePosition();
 
-    vehicle.avgSpeed = (vehicle.rigidVehicle.getWheelSpeed(2) +vehicle.rigidVehicle.getWheelSpeed(3))/2
-
-    vehicle.air = !vehicle.wheels.map(wheel=>wheel.body.position.y).some(pos=>pos < vehicle.wheelRadius)
-    
-    if(vehicle.cameraMode === 1){
-        let zpos=vehicle.vehicleBody.position.z/10;
-        let sign = Math.sign(vehicle.vehicleBody.position.z/10);
-        
-        vehicle.camera.position.y = 20 + (sign*(zpos));
-    }else if(vehicle.cameraMode ==2){
-        // NEED TO COHERENTLY MAP VEHICLE 'Y' ROTATION/VELOCITY? TO CAMERA XZ POSITION
-        // MAYBE NOT CAMERA 'Y' ROTATION AUTOMATICALLY WITH 'lootAt'
-        let plusX = Math.sign(vehicle.vehicleMesh.position.x) == 1;
-        let minusX = Math.sign(vehicle.vehicleMesh.position.x) == -1;
-
-        let plusZ = Math.sign(vehicle.vehicleMesh.position.z) == 1;
-        let minusZ = Math.sign(vehicle.vehicleMesh.position.z) == -1;
-
-        if(minusX && minusZ){
-            // vehicle.camera.position.x = vehicle.vehicleMesh.position.x
-
-        }else if(plusX && minusZ){
-            //completar
-        }else if(minusX && plusZ){
-            
-        }else if(plusX && plusZ){
-            
-        }
-
-        //THIS NEARLY GOT IT, LOOKAT MADE THE THING WORK
-        // vehicle.camera.quaternion.rotateTowards(utils.copyQuaternion(vehicle.vehicleBody.quaternion), 0.1)
-        
-        //THIS MADE THE THING WORK. VECTOR SUBSTRACTION AT ITS FINEST.
-        vehicle.camera.position.x = vehicle.vehicleMesh.position.x - vehicle.vehicleBody.velocity.x;
-        vehicle.camera.position.y = vehicle.vehicleMesh.position.y+20;
-        vehicle.camera.position.z = vehicle.vehicleMesh.position.z - vehicle.vehicleBody.velocity.z;
-    }
-    
-    vehicle.camera.lookAt(vehicle.vehicleMesh.position)
-
-    // gridHelper.position.x += -(vehicleBody.velocity.x/2) * timeStep
-    // gridHelper.position.z += -(vehicleBody.velocity.z/2) * timeStep
-
-    // gridHelper.position.x = (gridHelper.position.x) % 40
-    // gridHelper.position.z = (gridHelper.position.z) % 80
     render();
 }
 

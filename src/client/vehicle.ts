@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import * as GUIUtils from '../client/gui'
+import * as utils from '../client/utils'
 
 export class Vehicle {
     vehicleGeometry: THREE.BoxGeometry = new THREE.BoxGeometry(8, 1, 16);
@@ -98,7 +99,7 @@ export class Vehicle {
     }
 
     public setupControls() {
-        let jumpVelocity = 300
+        let jumpVelocity = 400
         let jumpReleased = true;
         
         document.addEventListener('keydown', (event) => {
@@ -257,4 +258,32 @@ export class Vehicle {
         scene.add(this.vehicleMesh);
     }
 
+    public updatePosition() {
+        this.vehicleMesh.position.copy(utils.copyVector(this.vehicleBody.position));
+        this.vehicleMesh.quaternion.copy(utils.copyQuaternion(this.vehicleBody.quaternion));
+
+        this.wheels.forEach(wheel => {
+            wheel.mesh.position.copy(utils.copyVector(wheel.body.position));
+            wheel.mesh.quaternion.copy(utils.copyQuaternion(wheel.body.quaternion));
+        });
+
+        this.avgSpeed = (this.rigidVehicle.getWheelSpeed(2) + this.rigidVehicle.getWheelSpeed(3)) / 2
+
+        this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
+
+        if (this.cameraMode === 1) {
+            let zpos = this.vehicleBody.position.z / 10;
+            let sign = Math.sign(this.vehicleBody.position.z / 10);
+            this.camera.position.y = 20 + (sign * (zpos));
+        } else if (this.cameraMode == 2) {
+            let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,0,this.vehicleBody.velocity.z).length()/85;
+            // let magnitude = this.vehicleBody.velocity.length()/85;
+            // let magnitude = 1;
+            this.camera.position.x = this.vehicleMesh.position.x - this.vehicleBody.velocity.x/magnitude;
+            this.camera.position.y = this.vehicleMesh.position.y + 20;
+            this.camera.position.z = this.vehicleMesh.position.z - this.vehicleBody.velocity.z/magnitude;
+        }
+
+        this.camera.lookAt(this.vehicleMesh.position)
+    }
 }
