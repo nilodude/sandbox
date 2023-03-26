@@ -218,6 +218,7 @@ export class Vehicle {
                 var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
                 var directionVector = this.vehicleBody.quaternion.vmult(directionVector);
                 this.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
+                this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
             }
         })
     }
