@@ -39,7 +39,8 @@ body {
 
 #camera{
     display: flex;
-    
+    flex-basis: 51%;
+    justify-content: space-evenly;
 }
 .numCamera{
     padding: 0% 2%;  
