@@ -40,6 +40,7 @@ export class Vehicle {
     public cameraMode = 1;
     private mouseClicked = false;
     public shouldUpdateHUD = true;
+    public showHelp = true;
 
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
@@ -65,13 +66,6 @@ export class Vehicle {
         const angularDamping = 0.8;
         this.wheelRadius = 1;
 
-        let wheelPositions =[
-            new CANNON.Vec3(this.axisWidth / 2, 0, -5),
-            new CANNON.Vec3(-this.axisWidth / 2, 0, -5),
-            new CANNON.Vec3(this.axisWidth / 2, 0, 5),
-            new CANNON.Vec3(-this.axisWidth / 2, 0, 5)
-        ];
-        
         for(let i=0;i<4;i++){
             const wheelBody = new CANNON.Body({
                 mass: 3, //kg
@@ -84,7 +78,7 @@ export class Vehicle {
             
             this.rigidVehicle.addWheel({
                 body: wheelBody,
-                position: wheelPositions[i],
+                position: this.wheelPositions[i],
                 axis: new CANNON.Vec3(-1, 0, 0),
                 direction: down,
             });
@@ -101,12 +95,16 @@ export class Vehicle {
     public setupControls() {
         let jumpVelocity = 350
         let jumpReleased = true;
-        
+        utils.toggleHelp(this.showHelp);
         document.addEventListener('keydown', (event) => {
             let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 18 : Math.PI / 12;
             const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
 
             switch (event.key) {
+                case 'h':
+                    this.showHelp = !this.showHelp;
+                    utils.toggleHelp(this.showHelp);
+                    break;
                 case 'w':
                 case 'ArrowUp':
                     if (!this.air) {

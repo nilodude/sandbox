@@ -1,5 +1,5 @@
 26/03/23:
-    -could add more cameramodes
+    -could add more cameramodes, like first person, useless but fun
 
     -need to initialize all vehicle props through constructor?
 
@@ -7,6 +7,6 @@
 
     -need to make wheels cylinder shaped and different colour each one
 
-    -need to plot HUD with controls
+    -need to hide HUD with key 'h'-> done
 
     -el juego del skate puede tener pelotas por ahi y al darle golpes salen volando y si caen encima de la tabla ganas mas puntos

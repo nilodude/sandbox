@@ -3,18 +3,40 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0px;
 }
+/* div{
+    display: unset;
+} */
 
-#help{
+#HUD{
     position: absolute;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+
     color: antiquewhite;
     font-family: monospace;
+    font-size: 0.9vw;
+
     top: 2%;
-    left: 5%;
-    
+    left: 2%;
+    width: 38vh;
+    height: 15vh;
 }
+
+#visible{
+    display: flex;
+    justify-content: space-around;
+}
+
+#help{
+    display: flex;
+    flex-direction: column;
+    flex-basis: 75%;
+    justify-content: space-between;
+}
+
 #camera{
     display: flex;
     

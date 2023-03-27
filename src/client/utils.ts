@@ -151,4 +151,25 @@ function addSphereBody(world: CANNON.World,material: CANNON.Material){
     world.addBody(sphereBody);
     return sphereBody;
 }
-export {/*addCamera,*/copyVector,copyQuaternion, spawnWireframeCube, spawnWireframeSphere,showGridHelper, addWorldLights,addGroundMesh,addSphereBody}
+
+function toggleHelp(show: boolean){
+    let h = document.getElementById('help');
+    if(h){
+        h.style.display = show ? 'flex' : 'none';
+    }
+    let sh = document.getElementById('showHelp');
+    if(sh){
+        sh.innerHTML = 'H: '+(show?'HIDE':'SHOW')+' HELP';
+    }
+}
+
+export {/*addCamera,*/
+copyVector,
+copyQuaternion,
+spawnWireframeCube,
+spawnWireframeSphere,
+showGridHelper, 
+addWorldLights,
+addGroundMesh,
+addSphereBody,
+toggleHelp}
