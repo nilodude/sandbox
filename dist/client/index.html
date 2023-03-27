@@ -6,19 +6,27 @@
         <title>
             iyo.js
         </title>
-        <style>
-            body {
-                overflow: hidden;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        </style>
+        <link rel="stylesheet" href="index.css">
     </head>
 
     <body>
         <canvas id="canvasID" class="c"></canvas>
-        
+        <div id="help">
+            <div id="camera">
+                <div>CAMERA:</div>
+                    <div id="cam1" class="numCamera">1</div> 
+                    <div id="cam2" class="numCamera">2</div>
+                    <div id="cam3" class="numCamera">3</div>
+                    <div id="cam4" class="numCamera">4</div>
+            </div>
+            <div id="controls">
+                <div>W A S D: MOVE</div>
+                <div>SPACEBAR: JUMP</div>
+                <div>LEFT CLICK (WHILE JUMP): ENABLE AIR SPIN</div>
+                <div>MOUSE DRAG (WHILE LEFT CLICK): AIR SPIN</div>
+                <div>R: RESET CAR</div>
+            </div>
+        </div>
         <script type="module" src="bundle.js"></script>
     </body>
 </html>

@@ -39,7 +39,7 @@ export class Vehicle {
     public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
     public cameraMode = 1;
     private mouseClicked = false;
-    public shouldUpdateHUD = false;
+    public shouldUpdateHUD = true;
 
     constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
         this.vehicleBody.position = position;
@@ -187,13 +187,17 @@ export class Vehicle {
                     break;
                 case 'r':
                     this.vehicleBody.position.setZero();
+                    this.vehicleBody.velocity.setZero();
                     this.vehicleBody.inertia = new CANNON.Vec3(0, 0, 0);
+                    this.wheelBodies.forEach(wheelBody=>wheelBody.quaternion = wheelBody.initQuaternion)
+                    
                     this.rigidVehicle.setWheelForce(0, 0);
                     this.rigidVehicle.setWheelForce(0, 1);
                     this.vehicleBody.torque.setZero();
                     this.vehicleBody.angularVelocity.set(0, 0, 0)
-                    this.vehicleBody.quaternion.set(0, 0, 0, this.vehicleBody.quaternion.w);
-                    this.vehicleBody.velocity.setZero();
+                    this.vehicleBody.quaternion = this.vehicleBody.initQuaternion;
+                    this.vehicleBody.position.setZero();
+                    this.vehicleMesh.position.set(0,0,0);
                     break;
             }
         });

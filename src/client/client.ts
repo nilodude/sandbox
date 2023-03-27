@@ -32,7 +32,7 @@ const groundMesh = utils.addGroundMesh(scene, groundSize);
 
 //PHYSICS WORLD
 const world = new CANNON.World({
-    gravity: new CANNON.Vec3(0, -50, 0), // m/s²
+    gravity: new CANNON.Vec3(0, -60, 0), // m/s²
 })
 
 //WHEEL PHYSICS MATERIAL
@@ -109,32 +109,6 @@ const objLoader = new OBJLoader();
 //new OrbitControls(camera, renderer.domElement);
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
-//HUD
-let HUD = document.createElement('div');
-let cameraHUD = document.createElement('div');
-let cameraHUDlabel = document.createElement('div');
-let cameraHUDvalue = document.createElement('div');
-
-cameraHUDlabel.innerHTML = 'SWITCH CAMERA:  1  |  2  |  3  |  4';
-cameraHUDlabel.style.position = 'absolute';
-cameraHUDlabel.style.top = '2%';
-cameraHUDlabel.style.left = '2%';
-cameraHUDlabel.style.color = 'antiquewhite';
-cameraHUDlabel.style.fontFamily= 'monospace';
-
-cameraHUDvalue.innerHTML = 'CAMERA '+vehicle.cameraMode;
-cameraHUDvalue.style.position = 'absolute';
-cameraHUDvalue.style.top = '5%';
-cameraHUDvalue.style.left = '5%';
-cameraHUDvalue.style.color = cameraHUDlabel.style.color;
-cameraHUDvalue.style.fontFamily= cameraHUDlabel.style.fontFamily;
-
-cameraHUD.appendChild(cameraHUDlabel);
-cameraHUD.appendChild(cameraHUDvalue);
-
-HUD.appendChild(cameraHUD);
-document.body.appendChild(HUD);
-
 //each ANIMATION frame gets calculated
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
@@ -173,15 +147,19 @@ function animate() {
     //UPDATE HUD
     if (vehicle.shouldUpdateHUD) {
         vehicle.shouldUpdateHUD = false;
-        cameraHUD.removeChild(cameraHUDvalue);
-        HUD.removeChild(cameraHUD);
-        document.body.removeChild(HUD);
+        
+       Array.from(document.querySelectorAll(".numCamera")).forEach(nc=>{
+        let numCamera = document.getElementById(nc.id);
+        if(numCamera){
+            if(parseInt(numCamera.innerHTML) != vehicle.cameraMode){
+                numCamera.style.color = 'antiquewhite';
+            }else{
+                // numCamera.style.color = 'rgb(222 0 255)';
+                numCamera.style.color = 'rgb(0 255 0)';
+            }
+        }
+       });
 
-        cameraHUDvalue.innerHTML = 'CAMERA ' + vehicle.cameraMode;
-
-        cameraHUD.appendChild(cameraHUDvalue)
-        HUD.appendChild(cameraHUD);
-        document.body.appendChild(HUD);
     }
     render();
 }
