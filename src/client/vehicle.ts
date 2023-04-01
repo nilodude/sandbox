@@ -83,10 +83,12 @@ export class Vehicle {
                 direction: down,
             });
 
-            const wheelGeometry = new THREE.SphereGeometry(this.wheelRadius);
+            const wheelGeometry = new THREE.CylinderGeometry( this.wheelRadius, this.wheelRadius);
+
             const wheelMaterial = new THREE.MeshNormalMaterial();
-            const wheelMesh = new THREE.Mesh(wheelGeometry,wheelMaterial);
-            wheelMesh.scale.x = 0.5;
+            const wheelMesh = new THREE.Mesh(wheelGeometry,new THREE.MeshBasicMaterial({wireframe: true}));
+            // wheelMesh.add(new THREE.AxesHelper(10))
+            wheelMesh.geometry.rotateZ(-Math.PI/2);
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
             scene.add(wheelMesh);
         }
