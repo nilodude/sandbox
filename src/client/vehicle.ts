@@ -128,7 +128,7 @@ export class Vehicle {
     }
 
     public setupControls() {
-        let jumpVelocity = 350
+        let jumpVelocity = 200
         let jumpReleased = true;
         utils.toggleHelp(this.showHelp);
         let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 24 : Math.PI / 16;
