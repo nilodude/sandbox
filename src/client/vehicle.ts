@@ -98,8 +98,9 @@ export class Vehicle {
         let jumpVelocity = 350
         let jumpReleased = true;
         utils.toggleHelp(this.showHelp);
+        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 18 : Math.PI / 18;
         document.addEventListener('keydown', (event) => {
-            let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 18 : Math.PI / 12;
+            
             const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
 
             switch (event.key) {
@@ -218,12 +219,16 @@ export class Vehicle {
 
                 case 'a':
                 case 'ArrowLeft':
+                    // this.rigidVehicle.setSteeringValue(-maxSteerVal/16, 0);
+                    // this.rigidVehicle.setSteeringValue(-maxSteerVal/16, 1);
                     this.rigidVehicle.setSteeringValue(0, 0);
                     this.rigidVehicle.setSteeringValue(0, 1);
                     break;
 
                 case 'd':
                 case 'ArrowRight':
+                    // this.rigidVehicle.setSteeringValue(maxSteerVal/16, 0);
+                    // this.rigidVehicle.setSteeringValue(maxSteerVal/16, 1);
                     this.rigidVehicle.setSteeringValue(0, 0);
                     this.rigidVehicle.setSteeringValue(0, 1);
                     break;
@@ -245,8 +250,11 @@ export class Vehicle {
             const spinMult = 0.5;
             if (this.air && this.mouseClicked) {
                 var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
-                var directionVector = this.vehicleBody.quaternion.vmult(directionVector);
-                this.vehicleBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z);
+                directionVector = this.vehicleBody.quaternion.vmult(directionVector);
+                this.vehicleBody.angularVelocity.set(
+                    directionVector.x,
+                    this.vehicleBody.angularVelocity.y/10   + directionVector.y,
+                    directionVector.z);
                 this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
             }
         })

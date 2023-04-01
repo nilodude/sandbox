@@ -11,3 +11,5 @@
     -need to initialize all vehicle props through constructor?
 
     -somethings slightly wrong when landing upside down, wheel positions gets twisted
+
+    -need to sum mouse inertia to existing inertia while air rolling
