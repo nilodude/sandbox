@@ -66,7 +66,7 @@ world.addBody(groundBody)
 const groundWheelContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
     wheelPhysMat,
-    {restitution: 0.01, 
+    {restitution: 0.71, 
     friction: 0.7}
 );
 world.addContactMaterial(groundWheelContactMat);

@@ -1,15 +1,17 @@
 26/03/23: updated 01/04/23:
     
-    -need to make wheels cylinder shaped and different colour each one-> done
+    -need to make wheels cylinder shaped and different colour each one-> DONE
 
-    -need to hide HUD with key 'h'-> done
+    -need to hide HUD with key 'h'-> DONE
+
+    -need to initialize all vehicle props through constructor?-> more or less DONE
 
     -el juego del skate puede tener pelotas por ahi y al darle golpes salen volando y si caen encima de la tabla ganas mas puntos
 
     -could add more cameramodes, like first person, useless but fun
 
-    -need to initialize all vehicle props through constructor?
-
     -somethings slightly wrong when landing upside down, wheel positions gets twisted
 
     -need to sum mouse inertia to existing inertia while air rolling
+
+    -need to improve friction wheel-ground

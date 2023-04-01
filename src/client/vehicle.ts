@@ -4,23 +4,11 @@ import * as GUIUtils from '../client/gui'
 import * as utils from '../client/utils'
 
 export class Vehicle {
-    vehicleGeometry: THREE.BoxGeometry = new THREE.BoxGeometry(8, 1, 16);
-    vehicleMaterial: THREE.MeshPhysicalMaterial = new THREE.MeshPhysicalMaterial({ 
-	    color: 0xaaaaaa,
-	    side: THREE.FrontSide,
-	    wireframe: false,
-        roughness: 0.01,
-        metalness: 0.9,
-        reflectivity: 1,
-        clearcoat:1,
-        clearcoatRoughness: 0.01
-    });
-    public vehicleMesh = new THREE.Mesh(this.vehicleGeometry, this.vehicleMaterial);
-    public vehicleBody = new CANNON.Body({
-        mass: 120,
-        position: new CANNON.Vec3(0, 2, 0),
-        shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)), 
-    });
+    // vehicleGeometry: THREE.ConeGeometry = new THREE.ConeGeometry(4,2);
+    vehicleMeshGeometry: THREE.BoxGeometry;
+    vehicleMeshMaterial: THREE.MeshPhysicalMaterial;
+    public vehicleMesh: THREE.Mesh;
+    public vehicleBody: CANNON.Body;
     axisWidth = 8.5;
     public wheelRadius = 2;
     wheelPositions=[
@@ -29,11 +17,15 @@ export class Vehicle {
         new CANNON.Vec3(this.axisWidth / 2, 0, 5),
         new CANNON.Vec3(-this.axisWidth / 2, 0, 5)
     ];
+    wheelColor = [
+        new THREE.Color(0,0,1),
+        new THREE.Color(0,1,0),
+        new THREE.Color(1,0,0),
+        new THREE.Color(1,1,0),
+    ]
     public wheelBodies: CANNON.Body[] = [];
     public wheels: any[]= [];
-    public rigidVehicle: CANNON.RigidVehicle = new CANNON.RigidVehicle({
-        chassisBody: this.vehicleBody,
-    });
+    public rigidVehicle: CANNON.RigidVehicle;
     public air: boolean = false;
     public avgSpeed: number=0;
     public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
@@ -42,9 +34,36 @@ export class Vehicle {
     public shouldUpdateHUD = true;
     public showHelp = true;
 
-    constructor(position = new CANNON.Vec3(0, 1.5, 0), material = new CANNON.Material({ friction: 2, restitution: 0.9 })){
-        this.vehicleBody.position = position;
-        this.vehicleBody.material = material;
+    constructor(
+        meshGeometry = new THREE.BoxGeometry(8, 1, 16),
+        meshMaterial = new THREE.MeshPhysicalMaterial({ 
+            color: 0xaaaaaa,
+            side: THREE.FrontSide,
+            wireframe: false,
+            roughness: 0.01,
+            metalness: 0.9,
+            reflectivity: 1,
+            clearcoat:1,
+            clearcoatRoughness: 0.01
+        }),
+        mesh = new THREE.Mesh(meshGeometry, meshMaterial),
+        bodyPosition = new CANNON.Vec3(0, 1.5, 0),
+        bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
+        body  = new CANNON.Body({
+            mass: 120,
+            position: bodyPosition,
+            shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+            material: bodyMaterial 
+        }),
+        rigidVehicle = new CANNON.RigidVehicle({
+            chassisBody: body,
+        }) 
+        ){
+        this.vehicleMeshGeometry = meshGeometry;
+        this.vehicleMeshMaterial = meshMaterial;
+        this.vehicleMesh = mesh;
+        this.vehicleBody = body
+        this.rigidVehicle = rigidVehicle;
     }
 
     public addCamera(size: number[],label:string){
@@ -86,7 +105,7 @@ export class Vehicle {
             const wheelGeometry = new THREE.CylinderGeometry( this.wheelRadius, this.wheelRadius);
 
             const wheelMaterial = new THREE.MeshNormalMaterial();
-            const wheelMesh = new THREE.Mesh(wheelGeometry,new THREE.MeshBasicMaterial({wireframe: true}));
+            const wheelMesh = new THREE.Mesh(wheelGeometry,new THREE.MeshBasicMaterial({color:this.wheelColor[i],wireframe: true}));
             // wheelMesh.add(new THREE.AxesHelper(10))
             wheelMesh.geometry.rotateZ(-Math.PI/2);
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
@@ -98,7 +117,7 @@ export class Vehicle {
         let jumpVelocity = 350
         let jumpReleased = true;
         utils.toggleHelp(this.showHelp);
-        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 18 : Math.PI / 18;
+        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 24 : Math.PI / 24;
         document.addEventListener('keydown', (event) => {
             
             const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
@@ -107,6 +126,7 @@ export class Vehicle {
                 case 'h':
                     this.showHelp = !this.showHelp;
                     utils.toggleHelp(this.showHelp);
+                    
                     break;
                 case 'w':
                 case 'ArrowUp':
@@ -135,6 +155,7 @@ export class Vehicle {
                 case 'd':
                 case 'ArrowRight':
                     if (!this.air) {
+
                         this.rigidVehicle.setSteeringValue(-maxSteerVal, 0);
                         this.rigidVehicle.setSteeringValue(-maxSteerVal, 1);
                     }
@@ -145,6 +166,14 @@ export class Vehicle {
                         this.rigidVehicle.wheelBodies.forEach(wheel => wheel.velocity.y += jumpVelocity);
                         jumpReleased = false;
                     }
+                    this.rigidVehicle.applyWheelForce(0,0);
+                    this.rigidVehicle.applyWheelForce(0,1);
+                    this.rigidVehicle.applyWheelForce(0,2);
+                    this.rigidVehicle.applyWheelForce(0,3);
+                    this.rigidVehicle.setSteeringValue(0, 0);
+                    this.rigidVehicle.setSteeringValue(0, 1);
+                    this.rigidVehicle.setSteeringValue(0, 2);
+                    this.rigidVehicle.setSteeringValue(0, 3);
                     break;
                 case '1':
                     this.shouldUpdateHUD = this.cameraMode != 1;
@@ -219,16 +248,12 @@ export class Vehicle {
 
                 case 'a':
                 case 'ArrowLeft':
-                    // this.rigidVehicle.setSteeringValue(-maxSteerVal/16, 0);
-                    // this.rigidVehicle.setSteeringValue(-maxSteerVal/16, 1);
                     this.rigidVehicle.setSteeringValue(0, 0);
                     this.rigidVehicle.setSteeringValue(0, 1);
                     break;
 
                 case 'd':
                 case 'ArrowRight':
-                    // this.rigidVehicle.setSteeringValue(maxSteerVal/16, 0);
-                    // this.rigidVehicle.setSteeringValue(maxSteerVal/16, 1);
                     this.rigidVehicle.setSteeringValue(0, 0);
                     this.rigidVehicle.setSteeringValue(0, 1);
                     break;
@@ -240,10 +265,14 @@ export class Vehicle {
         });
 
         document.addEventListener('mousedown',(event)=>{
-            this.mouseClicked = event.button === 0;
+            console.log(event.button)
+            this.mouseClicked = event.button === 0;  //left mouse
         })
         document.addEventListener('mouseup',(event)=>{
-            this.mouseClicked = !(this.mouseClicked && event.button === 0);
+            console.log(event.button)
+            if(event.button === 0){
+                this.mouseClicked = false;
+            }
         })
 
         document.addEventListener('mousemove', (event) => {
