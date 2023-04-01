@@ -10,12 +10,13 @@ export class Vehicle {
     public vehicleMesh: THREE.Mesh;
     public vehicleBody: CANNON.Body;
     axisWidth = 8.5;
+    axisLength = 7;
     public wheelRadius = 2;
     wheelPositions=[
-        new CANNON.Vec3(this.axisWidth / 2, 0, -5),
-        new CANNON.Vec3(-this.axisWidth / 2, 0, -5),
-        new CANNON.Vec3(this.axisWidth / 2, 0, 5),
-        new CANNON.Vec3(-this.axisWidth / 2, 0, 5)
+        new CANNON.Vec3(this.axisWidth / 2, 0, -this.axisLength),
+        new CANNON.Vec3(-this.axisWidth / 2, 0, -this.axisLength),
+        new CANNON.Vec3(this.axisWidth / 2, 0, this.axisLength),
+        new CANNON.Vec3(-this.axisWidth / 2, 0, this.axisLength)
     ];
     wheelColor = [
         new THREE.Color(0,0,1),
@@ -47,12 +48,14 @@ export class Vehicle {
             clearcoatRoughness: 0.01
         }),
         mesh = new THREE.Mesh(meshGeometry, meshMaterial),
+        bodyMass = 120,
         bodyPosition = new CANNON.Vec3(0, 1.5, 0),
+        bodyShape = new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
         bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
         body  = new CANNON.Body({
-            mass: 120,
+            mass: bodyMass,
             position: bodyPosition,
-            shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+            shape: bodyShape,
             material: bodyMaterial 
         }),
         rigidVehicle = new CANNON.RigidVehicle({
@@ -130,18 +133,18 @@ export class Vehicle {
                     break;
                 case 'w':
                 case 'ArrowUp':
-                    if (!this.air) {
+                    // if (!this.air) {
                         this.rigidVehicle.setWheelForce(maxForce, 0);
                         this.rigidVehicle.setWheelForce(maxForce, 1);
-                    }
+                    // }
                     break;
 
                 case 's':
                 case 'ArrowDown':
-                    if (!this.air) {
+                    // if (!this.air) {
                         this.rigidVehicle.setWheelForce(-maxForce, 0);
                         this.rigidVehicle.setWheelForce(-maxForce, 1);
-                    }
+                    // }
                     break;
 
                 case 'a':
@@ -278,13 +281,13 @@ export class Vehicle {
         document.addEventListener('mousemove', (event) => {
             const spinMult = 0.5;
             if (this.air && this.mouseClicked) {
-                var directionVector = new CANNON.Vec3(- event.movementY * spinMult, 0, -event.movementX * spinMult);
+                var directionVector = new CANNON.Vec3(- event.movementY * spinMult, this.vehicleBody.angularVelocity.y/10, -event.movementX * spinMult);
                 directionVector = this.vehicleBody.quaternion.vmult(directionVector);
                 this.vehicleBody.angularVelocity.set(
                     directionVector.x,
                     this.vehicleBody.angularVelocity.y/10   + directionVector.y,
                     directionVector.z);
-                this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
+                // this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
             }
         })
     }
