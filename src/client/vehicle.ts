@@ -328,7 +328,7 @@ export class Vehicle {
 
         this.avgSpeed = (this.rigidVehicle.getWheelSpeed(2) + this.rigidVehicle.getWheelSpeed(3)) / 2
 
-        this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
+        this.air = this.wheels.map(wheel => wheel.body.position.y).some(pos => pos > this.wheelRadius)
 
         if (this.cameraMode === 1) {
             let zpos = this.vehicleBody.position.z / 10;
@@ -336,10 +336,25 @@ export class Vehicle {
             this.camera.position.y = 20 + (sign * (zpos));
         } else if (this.cameraMode == 2) {
             let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,0,this.vehicleBody.velocity.z).length()/85;
-         
-            this.camera.position.x = this.vehicleMesh.position.x - this.vehicleBody.velocity.x/magnitude;
+            
+            //NEED TO FIND A WAY TO DETECT WHEN VEHICLE SWITCHES DIRECTION FORWARDS/BACKWARDS.
+            // console.table([this.rigidVehicle.getWheelSpeed(0),this.rigidVehicle.getWheelSpeed(1),this.rigidVehicle.getWheelSpeed(2),this.rigidVehicle.getWheelSpeed(3)]);
+            
+            // let forward = [this.rigidVehicle.getWheelSpeed(0),
+            //     this.rigidVehicle.getWheelSpeed(1),
+            //     this.rigidVehicle.getWheelSpeed(2),
+            //     this.rigidVehicle.getWheelSpeed(3)].some(speed=>speed<0) && !this.air ? -1 : 1;
+
+            
+            // forward = 1 -> camera OK going forwards
+            // forward = -1 -> camera OK going backwards
+            let forward = 1;
+
+            this.camera.position.x = this.vehicleMesh.position.x - forward*this.vehicleBody.velocity.x/magnitude;
             this.camera.position.y = this.vehicleMesh.position.y + 20;
-            this.camera.position.z = this.vehicleMesh.position.z - this.vehicleBody.velocity.z/magnitude;
+            this.camera.position.z = this.vehicleMesh.position.z - forward*this.vehicleBody.velocity.z/magnitude;
+
+
         }else if(this.cameraMode == 3){
             this.camera.position.x = this.vehicleMesh.position.x;
             this.camera.position.y = this.vehicleMesh.position.y + 20;
