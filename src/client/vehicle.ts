@@ -9,33 +9,24 @@ export class Vehicle {
     vehicleMeshMaterial: THREE.MeshPhysicalMaterial;
     public vehicleMesh: THREE.Mesh;
     public vehicleBody: CANNON.Body;
-    axisWidth = 8.5;
-    axisLength = 7;
-    public wheelRadius = 2;
-    wheelPositions=[
-        new CANNON.Vec3(this.axisWidth / 2, 0, -this.axisLength),
-        new CANNON.Vec3(-this.axisWidth / 2, 0, -this.axisLength),
-        new CANNON.Vec3(this.axisWidth / 2, 0, this.axisLength),
-        new CANNON.Vec3(-this.axisWidth / 2, 0, this.axisLength)
-    ];
-    wheelColor = [
-        new THREE.Color(0,0,1),
-        new THREE.Color(0,1,0),
-        new THREE.Color(1,0,0),
-        new THREE.Color(1,1,0),
-    ]
+    axisWidth: number;
+    axisLength: number;
+    public wheelRadius: number;
+    wheelPositions: CANNON.Vec3[];
+    wheelColors: THREE.Color[];
     public wheelBodies: CANNON.Body[] = [];
     public wheels: any[]= [];
     public rigidVehicle: CANNON.RigidVehicle;
     public air: boolean = false;
     public avgSpeed: number=0;
     public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
-    public cameraMode = 1;
+    public cameraMode: number;
     private mouseClicked = false;
     public shouldUpdateHUD = true;
     public showHelp = true;
 
     constructor(
+        cameraMode = 1,
         meshGeometry = new THREE.BoxGeometry(8, 1, 16),
         meshMaterial = new THREE.MeshPhysicalMaterial({ 
             color: 0xaaaaaa,
@@ -48,9 +39,11 @@ export class Vehicle {
             clearcoatRoughness: 0.01
         }),
         mesh = new THREE.Mesh(meshGeometry, meshMaterial),
+        axisWidth = 9,
+        axisLength = 6,
         bodyMass = 120,
-        bodyPosition = new CANNON.Vec3(0, 1.5, 0),
-        bodyShape = new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+        bodyPosition = new CANNON.Vec3(-10, 40.5, 0),
+        bodyShape = new CANNON.Box(new CANNON.Vec3(meshGeometry.parameters.width/2, meshGeometry.parameters.height/2, meshGeometry.parameters.depth/2)),
         bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
         body  = new CANNON.Body({
             mass: bodyMass,
@@ -60,13 +53,32 @@ export class Vehicle {
         }),
         rigidVehicle = new CANNON.RigidVehicle({
             chassisBody: body,
-        }) 
+        }),
+        wheelRadius = 1,
+        wheelPositions=[
+            new CANNON.Vec3(axisWidth / 2, 0, -axisLength),
+            new CANNON.Vec3(-axisWidth / 2, 0, -axisLength),
+            new CANNON.Vec3(axisWidth / 2, 0, axisLength),
+            new CANNON.Vec3(-axisWidth / 2, 0, axisLength)
+        ],
+        wheelColors= [
+            new THREE.Color(0,0,1),
+            new THREE.Color(0,1,0),
+            new THREE.Color(1,0,0),
+            new THREE.Color(1,1,0),
+        ]
         ){
+        this.cameraMode = cameraMode;
+        this.axisWidth = axisWidth;
+        this.axisLength = axisLength;
         this.vehicleMeshGeometry = meshGeometry;
         this.vehicleMeshMaterial = meshMaterial;
         this.vehicleMesh = mesh;
         this.vehicleBody = body
         this.rigidVehicle = rigidVehicle;
+        this.wheelRadius = wheelRadius;
+        this.wheelPositions = wheelPositions;
+        this.wheelColors = wheelColors
     }
 
     public addCamera(size: number[],label:string){
@@ -86,11 +98,10 @@ export class Vehicle {
         //WHEELS
         const down = new CANNON.Vec3(0, -1, 0);
         const angularDamping = 0.8;
-        this.wheelRadius = 1;
 
         for(let i=0;i<4;i++){
             const wheelBody = new CANNON.Body({
-                mass: 3, //kg
+                mass: 5, //kg
                 angularDamping: angularDamping,
                 shape: new CANNON.Sphere(this.wheelRadius),
                 material: wheelBodyMaterial // este spherePhysMat (o como se llame en cada sitio, wheelBodyMaterial) es el que se va a asociar con el groundPhysMat para definir la fisica del contacto entre esos dos materiales
@@ -108,7 +119,7 @@ export class Vehicle {
             const wheelGeometry = new THREE.CylinderGeometry( this.wheelRadius, this.wheelRadius);
 
             const wheelMaterial = new THREE.MeshNormalMaterial();
-            const wheelMesh = new THREE.Mesh(wheelGeometry,new THREE.MeshBasicMaterial({color:this.wheelColor[i],wireframe: true}));
+            const wheelMesh = new THREE.Mesh(wheelGeometry,new THREE.MeshBasicMaterial({color:this.wheelColors[i],wireframe: true}));
             // wheelMesh.add(new THREE.AxesHelper(10))
             wheelMesh.geometry.rotateZ(-Math.PI/2);
             this.wheels.push({mesh: wheelMesh, body: this.wheelBodies[i]});
@@ -120,7 +131,7 @@ export class Vehicle {
         let jumpVelocity = 350
         let jumpReleased = true;
         utils.toggleHelp(this.showHelp);
-        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 24 : Math.PI / 24;
+        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 24 : Math.PI / 16;
         document.addEventListener('keydown', (event) => {
             
             const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
@@ -133,18 +144,18 @@ export class Vehicle {
                     break;
                 case 'w':
                 case 'ArrowUp':
-                    // if (!this.air) {
+                    if (!this.air) {
                         this.rigidVehicle.setWheelForce(maxForce, 0);
                         this.rigidVehicle.setWheelForce(maxForce, 1);
-                    // }
+                    }
                     break;
 
                 case 's':
                 case 'ArrowDown':
-                    // if (!this.air) {
+                    if (!this.air) {
                         this.rigidVehicle.setWheelForce(-maxForce, 0);
                         this.rigidVehicle.setWheelForce(-maxForce, 1);
-                    // }
+                    }
                     break;
 
                 case 'a':
@@ -287,7 +298,7 @@ export class Vehicle {
                     directionVector.x,
                     this.vehicleBody.angularVelocity.y/10   + directionVector.y,
                     directionVector.z);
-                // this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
+                this.wheelBodies.forEach(wheelBody=>wheelBody.angularVelocity.set(directionVector.x, directionVector.y, directionVector.z));
             }
         })
     }
