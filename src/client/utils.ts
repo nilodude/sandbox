@@ -132,6 +132,26 @@ function addGroundMesh(scene: THREE.Scene, groundSize: number) {
     return groundMesh;
 }
 
+function addRampMesh(scene: THREE.Scene) {
+    const geometry = new THREE.CylinderGeometry(0.1, 200, 20, 4)
+    const meshMaterial = new THREE.MeshNormalMaterial();
+    const rampMesh = new THREE.Mesh(geometry, meshMaterial)
+    scene.add(rampMesh);
+    return rampMesh;
+}
+
+function addRampBody(world: CANNON.World,material: CANNON.Material) {
+    const rampBody = new CANNON.Body({
+        type: CANNON.Body.STATIC,
+        shape: new CANNON.Cylinder(0.1, 200, 20, 4),
+        material: material,
+        position: new CANNON.Vec3(-100,10,-700)
+    })
+    rampBody.quaternion.setFromEuler(0, 0, 0) // make it face up
+    world.addBody(rampBody);
+    return rampBody;
+}
+
 function addSphereBody(world: CANNON.World,material: CANNON.Material){
     const sphereBody = new CANNON.Body({
         mass: 20, // kg
@@ -160,6 +180,8 @@ function toggleHelp(show: boolean){
 export {/*addCamera,*/
 copyVector,
 copyQuaternion,
+addRampMesh,
+addRampBody,
 spawnWireframeCube,
 spawnWireframeSphere,
 showGridHelper, 

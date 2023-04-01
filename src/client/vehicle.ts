@@ -54,7 +54,7 @@ export class Vehicle {
         rigidVehicle = new CANNON.RigidVehicle({
             chassisBody: body,
         }),
-        wheelRadius = 1,
+        wheelRadius = 1.1,
         wheelPositions=[
             new CANNON.Vec3(axisWidth / 2, 0, -axisLength),
             new CANNON.Vec3(-axisWidth / 2, 0, -axisLength),
@@ -328,7 +328,7 @@ export class Vehicle {
 
         this.avgSpeed = (this.rigidVehicle.getWheelSpeed(2) + this.rigidVehicle.getWheelSpeed(3)) / 2
 
-        this.air = this.wheels.map(wheel => wheel.body.position.y).some(pos => pos > this.wheelRadius)
+        this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
 
         if (this.cameraMode === 1) {
             let zpos = this.vehicleBody.position.z / 10;

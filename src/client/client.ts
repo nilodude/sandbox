@@ -27,8 +27,7 @@ const groundSize = 3000;
 //LIGHTS
 utils.addWorldLights(scene, groundSize);
 
-//GROUND MESH
-const groundMesh = utils.addGroundMesh(scene, groundSize);
+
 
 //PHYSICS WORLD
 const world = new CANNON.World({
@@ -53,6 +52,9 @@ vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
 vehicle.rigidVehicle.addToWorld(world);
 vehicle.addCamera(size,'vehicle camera');
 
+//GROUND MESH
+const groundMesh = utils.addGroundMesh(scene, groundSize);
+
 //GROUND PHYSICS MATERIAL
 const groundPhysMat = new CANNON.Material();
 
@@ -69,7 +71,7 @@ world.addBody(groundBody)
 const groundWheelContactMat = new CANNON.ContactMaterial(
     groundPhysMat,
     wheelPhysMat,
-    {restitution: 0.71, 
+    {restitution: 0.69, 
     friction: 0.7}
 );
 world.addContactMaterial(groundWheelContactMat);
@@ -84,6 +86,33 @@ const groundVehicleContactMat = new CANNON.ContactMaterial(
     }
 );
 world.addContactMaterial(groundVehicleContactMat);
+
+// const rampPhysMat = new CANNON.Material();
+// const rampMesh = utils.addRampMesh(scene);
+// const rampBody= utils.addRampBody(world,rampPhysMat);
+
+// // 'VEHICLE <-> RAMP' PHYSICS
+// const rampVehicleContactMat = new CANNON.ContactMaterial(
+//     rampPhysMat,
+//     vehicle.vehicleBody.material? vehicle.vehicleBody.material : new CANNON.Material(),
+//     {
+//         restitution: 0.71,
+//         friction: 0.07
+//     }
+// );
+// world.addContactMaterial(rampVehicleContactMat);
+
+// // 'WHEEL <-> RAMP' PHYSICS
+// const rampWheelContactMat = new CANNON.ContactMaterial(
+//     rampPhysMat,
+//     wheelPhysMat,
+//     {
+//         restitution: 0.71,
+//         friction: 0.71
+//     }
+// );
+// world.addContactMaterial(rampWheelContactMat);
+
 
 //NON PHYSICAL ELEMENTS
 //GRID HELPER
@@ -143,6 +172,9 @@ function animate() {
     groundMesh.position.copy(utils.copyVector(groundBody.position));
     groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
 
+    // rampMesh.position.copy(utils.copyVector(rampBody.position)); 
+    // rampMesh.quaternion.copy(utils.copyQuaternion(rampBody.quaternion));
+    
     vehicle.updatePosition();
 
     //UPDATE HUD
