@@ -14,6 +14,7 @@ import * as GUIUtils from '../client/gui'
 //     GUIUtils.addCameraFolder(camera,label);
 //     return camera;
 // }
+let sphereRadius = 3;
 
 function copyVector(cannonVec:  CANNON.Vec3 ){
     let threeVec= new THREE.Vector3 ;
@@ -50,12 +51,10 @@ function spawnWireframeCube(scene: THREE.Scene){
 
 //SPHERE
 function spawnWireframeSphere(scene: THREE.Scene){
-    const geometry = new THREE.SphereGeometry()
+    const geometry = new THREE.SphereGeometry(sphereRadius)
     const material = new THREE.MeshNormalMaterial();
     const sphere = new THREE.Mesh(geometry, material)
     GUIUtils.addSphereFolder(sphere);
-    sphere.position.x = -2;
-    sphere.position.y = 0.5;
     sphere.add(new THREE.AxesHelper(5))
     scene.add(sphere)
     return sphere;
@@ -71,49 +70,44 @@ function showGridHelper(scene: THREE.Scene){
 }
 //LIGHTS
 function addWorldLights(scene: THREE.Scene, groundSize: number){
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
     scene.add(ambientLight)
-    const rectLight = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-    rectLight.position.set( 0, 30, 0 );
-    rectLight.lookAt( 0, 0, 0 );
-    scene.add( rectLight )
-    const rectLight1 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-    rectLight1.position.set( 0, 30, 250 );
-    rectLight1.lookAt( 0, 0, 0 );
-    scene.add( rectLight1 )
-    const rectLight2 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-    rectLight2.position.set( 0, 30, -250 );
-    rectLight2.lookAt( 0, 0, 0 );
-    scene.add( rectLight2 )
-    const rectLight3 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-    rectLight3.position.set( 0, 30, -450 );
-    rectLight3.lookAt( 0, 0, 0 );
-    scene.add( rectLight3 )
-    const rectLight4 = new THREE.RectAreaLight( 0xffff00, 1000,  1000, 0.2);
-    rectLight4.position.set( 0, 30, 450 );
-    rectLight4.lookAt( 0, 0, 0 );
-    scene.add( rectLight4 )
+
+    // RECTANGLE LIGHTS
+    const newRectLight = ()=>new THREE.RectAreaLight( 0xffff00, 1500,  groundSize, 0.2);
+    const rectsPerGround = 14;
+    const rectLightSpacing = groundSize / rectsPerGround;
     
-    const numLights = 12;
+    for(let i=0;i<=rectsPerGround;i++){
+        const rectLight = newRectLight();
+        rectLight.position.set( 0, 30, (groundSize/2)- i*rectLightSpacing);
+        rectLight.lookAt( 0, 0, 0 );
+        scene.add(rectLight);
+    }
+    
+    //SPOTLIGHTS
+    const numLights = 24;
     const lightsPerSide = numLights/4;
     const spacing = groundSize/lightsPerSide;
     
+    const newSpotlight = ()=>new THREE.SpotLight(0xffffff, 50, 1000, Math.PI /4, 1)
+
     for(let i=0;i<=lightsPerSide;i++){
-        const spotlight1 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
+        const spotlight1 = newSpotlight()
         spotlight1.position.set(groundSize/2, 5,(groundSize/2)-i*spacing ) 
         spotlight1.target.position.set(0, 0, 0)
         
-        const spotlight2 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
+        const spotlight2 = newSpotlight()
         spotlight2.position.set(-groundSize/2, 5,(groundSize/2)-i*spacing ) 
         spotlight2.target.position.set(0, 0, 0)
         
-        const spotlight3 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
+        const spotlight3 = newSpotlight()
         spotlight3.position.set(-(groundSize/2)+i*spacing, 5,groundSize/2) 
         spotlight3.target.position.set(0, 0, 0)
     
-        const spotlight4 = new THREE.SpotLight(0xffffff, 10, 1000, Math.PI / 8, 1)
+        const spotlight4 = newSpotlight()
         spotlight4.position.set(-(groundSize/2)+i*spacing, 5,-groundSize/2) 
-        // spotlight4.target.position.set(0, 0, 0)
+        spotlight4.target.position.set(0, 0, 0)
         
         scene.add(spotlight1)
         scene.add(spotlight2)
@@ -140,9 +134,9 @@ function addGroundMesh(scene: THREE.Scene, groundSize: number) {
 
 function addSphereBody(world: CANNON.World,material: CANNON.Material){
     const sphereBody = new CANNON.Body({
-        mass: 2, // kg
-        shape: new CANNON.Sphere(1),
-        position: new CANNON.Vec3(8, 10, 0),
+        mass: 20, // kg
+        shape: new CANNON.Sphere(sphereRadius),
+        position: new CANNON.Vec3(8, 30, -50),
         material: material
       })
     sphereBody.linearDamping = 0.31;

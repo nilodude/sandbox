@@ -19,7 +19,7 @@ renderer.setSize(size[0], size[1])
 
 //SCENE
 const scene = new THREE.Scene()
-const groundSize = 1000;
+const groundSize = 3000;
 
 //CAMERA
 // const camera = utils.addCamera(size,'vehicle camera');
@@ -40,6 +40,9 @@ const wheelPhysMat = new CANNON.Material();
 
 //SPHERE BODY
 const sphereBody = utils.addSphereBody(world,wheelPhysMat);
+//SHPERE MESH
+const sphereMesh = utils.spawnWireframeSphere(scene)
+
 
 // VEHICLE
 let vehicle = new Vehicle();
@@ -82,15 +85,12 @@ const groundVehicleContactMat = new CANNON.ContactMaterial(
 );
 world.addContactMaterial(groundVehicleContactMat);
 
-//ELEMENTS
+//NON PHYSICAL ELEMENTS
 //GRID HELPER
 //utils.showGridHelper(scene)
 
 //CUBE
 const cube = utils.spawnWireframeCube(scene);
-
-//SHPERE MESH
-const sphereMesh = utils.spawnWireframeSphere(scene)
 
 //MONO
 const objLoader = new OBJLoader();
@@ -107,6 +107,7 @@ const objLoader = new OBJLoader();
 }); 
 
 //new OrbitControls(camera, renderer.domElement);
+
 world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 
 //each ANIMATION frame gets calculated
