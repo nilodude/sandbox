@@ -1,5 +1,6 @@
 import * as CANNON from 'cannon-es'
 import THREE = require('three');
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as GUIUtils from '../client/gui'
 
 // function addCamera(size: number[],label:string){
@@ -132,6 +133,24 @@ function addGroundMesh(scene: THREE.Scene, groundSize: number) {
     return groundMesh;
 }
 
+
+async function loadVehicleMesh() {
+    return new Promise((resolve)=>{
+        const objLoader = new OBJLoader();
+        let mesh = new THREE.Mesh();
+        objLoader.load('models/eskei.obj',
+        (sk8) => {
+            mesh = sk8.children[0] as THREE.Mesh;
+            mesh.material = new THREE.Material();
+            console.log('model loaded');
+            resolve(mesh);
+        },
+        ()=>console.log('loading model')
+        );
+    });
+    
+}
+
 function addRampMesh(scene: THREE.Scene) {
     const geometry = new THREE.CylinderGeometry(0.1, 200, 20, 4)
     const meshMaterial = new THREE.MeshNormalMaterial();
@@ -180,6 +199,7 @@ function toggleHelp(show: boolean){
 export {/*addCamera,*/
 copyVector,
 copyQuaternion,
+loadVehicleMesh,
 addRampMesh,
 addRampBody,
 spawnWireframeCube,

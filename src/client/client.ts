@@ -5,6 +5,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as CANNON from 'cannon-es'
 import * as utils from '../client/utils'
 import { Vehicle } from '../client/vehicle'
+import { Ground } from './ground';
 
 GUIUtils.startGUI();
 
@@ -20,14 +21,8 @@ renderer.setSize(size[0], size[1])
 //SCENE
 const scene = new THREE.Scene()
 const groundSize = 3000;
-
-//CAMERA
-// const camera = utils.addCamera(size,'vehicle camera');
-
 //LIGHTS
 utils.addWorldLights(scene, groundSize);
-
-
 
 //PHYSICS WORLD
 const world = new CANNON.World({
@@ -43,8 +38,26 @@ const sphereBody = utils.addSphereBody(world,wheelPhysMat);
 const sphereMesh = utils.spawnWireframeSphere(scene)
 
 
+const objLoader = new OBJLoader();
+        let mesh = new THREE.Mesh();
+        objLoader.load('models/eskei.obj',
+        (sk8) => {
+            mesh = sk8.children[0] as THREE.Mesh;
+            mesh.material = new THREE.Material();
+            console.log('model loaded');
+            
+        },
+        ()=>console.log('loading model')
+        );
+
+// scene.add(skateMesh)
+
+
+
 // VEHICLE
 let vehicle = new Vehicle();
+// vehicle.loadVehicleMesh();
+// vehicle.addMesh(skateMesh);
 vehicle.addWheels(scene,wheelPhysMat);
 vehicle.setupControls();
 vehicle.addLights(scene);
@@ -52,88 +65,10 @@ vehicle.vehicleMesh.add(new THREE.AxesHelper(10));
 vehicle.rigidVehicle.addToWorld(world);
 vehicle.addCamera(size,'vehicle camera');
 
-//GROUND MESH
-const groundMesh = utils.addGroundMesh(scene, groundSize);
+const ground = new Ground();
+ground.setupGround(scene, world, groundSize, wheelPhysMat,vehicle);
 
-//GROUND PHYSICS MATERIAL
-const groundPhysMat = new CANNON.Material();
-
-//GROUND BODY
-const groundBody = new CANNON.Body({
-    type: CANNON.Body.STATIC,
-    shape: new CANNON.Plane(),
-    material: groundPhysMat
-})
-groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
-world.addBody(groundBody)
-
-// 'WHEEL <-> GROUND' PHYSICS
-const groundWheelContactMat = new CANNON.ContactMaterial(
-    groundPhysMat,
-    wheelPhysMat,
-    {restitution: 0.69, 
-    friction: 0.7}
-);
-world.addContactMaterial(groundWheelContactMat);
-
-// 'VEHICLE <-> GROUND' PHYSICS
-const groundVehicleContactMat = new CANNON.ContactMaterial(
-    groundPhysMat,
-    vehicle.vehicleBody.material? vehicle.vehicleBody.material : new CANNON.Material(),
-    {
-        restitution: 0.01,
-        friction: 0.01
-    }
-);
-world.addContactMaterial(groundVehicleContactMat);
-
-// const rampPhysMat = new CANNON.Material();
-// const rampMesh = utils.addRampMesh(scene);
-// const rampBody= utils.addRampBody(world,rampPhysMat);
-
-// // 'VEHICLE <-> RAMP' PHYSICS
-// const rampVehicleContactMat = new CANNON.ContactMaterial(
-//     rampPhysMat,
-//     vehicle.vehicleBody.material? vehicle.vehicleBody.material : new CANNON.Material(),
-//     {
-//         restitution: 0.71,
-//         friction: 0.07
-//     }
-// );
-// world.addContactMaterial(rampVehicleContactMat);
-
-// // 'WHEEL <-> RAMP' PHYSICS
-// const rampWheelContactMat = new CANNON.ContactMaterial(
-//     rampPhysMat,
-//     wheelPhysMat,
-//     {
-//         restitution: 0.71,
-//         friction: 0.71
-//     }
-// );
-// world.addContactMaterial(rampWheelContactMat);
-
-
-//NON PHYSICAL ELEMENTS
-//GRID HELPER
-//utils.showGridHelper(scene)
-
-//CUBE
 const cube = utils.spawnWireframeCube(scene);
-
-//MONO
-const objLoader = new OBJLoader();
-  objLoader.load('models/mono.obj', (monkey) => {
-    
-    monkey.position.x = 0;
-    monkey.position.y = 0;
-    monkey.position.z = 0;
-    // root.scale.x *= 5
-    // root.scale.y *= 5
-    // root.scale.z *= 5
-    monkey.add(new THREE.AxesHelper(5))
-    scene.add(monkey);
-}); 
 
 //new OrbitControls(camera, renderer.domElement);
 
@@ -168,9 +103,7 @@ function animate() {
     sphereMesh.position.copy(utils.copyVector(sphereBody.position))
     sphereMesh.quaternion.copy(utils.copyQuaternion(sphereBody.quaternion))
 
-    //estas dos se podrian quitar si se crease el mesh con la misma orientacion que el body, la correcta (horizontal)
-    groundMesh.position.copy(utils.copyVector(groundBody.position));
-    groundMesh.quaternion.copy(utils.copyQuaternion(groundBody.quaternion));
+    ground.update();
 
     // rampMesh.position.copy(utils.copyVector(rampBody.position)); 
     // rampMesh.quaternion.copy(utils.copyQuaternion(rampBody.quaternion));

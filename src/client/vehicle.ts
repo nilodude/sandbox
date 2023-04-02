@@ -2,11 +2,12 @@ import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import * as GUIUtils from '../client/gui'
 import * as utils from '../client/utils'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 export class Vehicle {
     // vehicleGeometry: THREE.ConeGeometry = new THREE.ConeGeometry(4,2);
-    vehicleMeshGeometry: THREE.BoxGeometry;
-    vehicleMeshMaterial: THREE.MeshPhysicalMaterial;
+    vehicleMeshGeometry: THREE.BufferGeometry;
+    vehicleMeshMaterial: THREE.MeshPhysicalMaterial | THREE.Material;
     public vehicleMesh: THREE.Mesh;
     public vehicleBody: CANNON.Body;
     axisWidth: number;
@@ -25,9 +26,12 @@ export class Vehicle {
     public shouldUpdateHUD = true;
     public showHelp = true;
 
+
+    
     constructor(
         cameraMode = 1,
         meshGeometry = new THREE.BoxGeometry(8, 1, 16),
+        // meshGeometry = new THREE.BufferGeometry(),
         meshMaterial = new THREE.MeshPhysicalMaterial({ 
             color: 0xaaaaaa,
             side: THREE.FrontSide,
@@ -38,12 +42,15 @@ export class Vehicle {
             clearcoat:1,
             clearcoatRoughness: 0.01
         }),
-        mesh = new THREE.Mesh(meshGeometry, meshMaterial),
+        // meshMaterial = new THREE.Material(),
+        mesh = new THREE.Mesh(meshGeometry,meshMaterial),
         axisWidth = 9,
         axisLength = 6,
         bodyMass = 120,
         bodyPosition = new CANNON.Vec3(-10, 40.5, 0),
         bodyShape = new CANNON.Box(new CANNON.Vec3(meshGeometry.parameters.width/2, meshGeometry.parameters.height/2, meshGeometry.parameters.depth/2)),
+        // bodyShape = new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+
         bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
         body  = new CANNON.Body({
             mass: bodyMass,
@@ -68,6 +75,7 @@ export class Vehicle {
             new THREE.Color(1,1,0),
         ]
         ){
+          
         this.cameraMode = cameraMode;
         this.axisWidth = axisWidth;
         this.axisLength = axisLength;
@@ -78,7 +86,13 @@ export class Vehicle {
         this.rigidVehicle = rigidVehicle;
         this.wheelRadius = wheelRadius;
         this.wheelPositions = wheelPositions;
-        this.wheelColors = wheelColors
+        this.wheelColors = wheelColors;
+        // const objLoader = new OBJLoader();
+        // objLoader.load('models/eskei.obj', (sk8) => {
+        //     this.vehicleMesh = sk8.children[0] as THREE.Mesh;
+        //     this.vehicleMesh.material = new THREE.Material();
+            
+        // }); 
     }
 
     public addCamera(size: number[],label:string){
@@ -92,6 +106,20 @@ export class Vehicle {
         
         GUIUtils.addCameraFolder(this.camera,label);
         return this.camera;
+    }
+
+    public loadVehicleMesh() {
+        const objLoader = new OBJLoader();
+        let mesh = new THREE.Mesh();
+        objLoader.load('models/eskei.obj', (sk8) => {
+            mesh = sk8.children[0] as THREE.Mesh;
+            // this.addMesh(mesh);
+        });
+        return mesh;
+    }
+
+    public addMesh(mesh: THREE.Mesh){
+        this.vehicleMesh = mesh;
     }
 
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
