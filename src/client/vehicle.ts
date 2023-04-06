@@ -6,94 +6,110 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 export class Vehicle {
     // vehicleGeometry: THREE.ConeGeometry = new THREE.ConeGeometry(4,2);
-    vehicleMeshGeometry: THREE.BufferGeometry;
-    vehicleMeshMaterial: THREE.MeshPhysicalMaterial | THREE.Material;
-    public vehicleMesh: THREE.Mesh;
-    public vehicleBody: CANNON.Body;
-    axisWidth: number;
-    axisLength: number;
-    public wheelRadius: number;
-    wheelPositions: CANNON.Vec3[];
-    wheelColors: THREE.Color[];
+    meshGeometry: THREE.BufferGeometry | undefined;
+    meshMaterial: THREE.Material | undefined;
+    public vehicleMesh: THREE.Mesh = new THREE.Mesh();
+    public vehicleBody: CANNON.Body = new CANNON.Body();
+    axisWidth: number  = 9;
+    axisLength: number = 6;
+    public wheelRadius: number = 1;
+    wheelPositions: CANNON.Vec3[]  = [];
+    wheelColors: THREE.Color[]  = [];
     public wheelBodies: CANNON.Body[] = [];
     public wheels: any[]= [];
-    public rigidVehicle: CANNON.RigidVehicle;
+    public rigidVehicle: CANNON.RigidVehicle = new  CANNON.RigidVehicle();
     public air: boolean = false;
     public avgSpeed: number=0;
     public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera();
-    public cameraMode: number;
+    public cameraMode: number | undefined;
     private mouseClicked = false;
     public shouldUpdateHUD = true;
     public showHelp = true;
 
 
-    
-    constructor(
-        cameraMode = 1,
-        meshGeometry = new THREE.BoxGeometry(8, 1, 16),
-        // meshGeometry = new THREE.BufferGeometry(),
-        meshMaterial = new THREE.MeshPhysicalMaterial({ 
-            color: 0xaaaaaa,
-            side: THREE.FrontSide,
-            wireframe: false,
-            roughness: 0.01,
-            metalness: 0.9,
-            reflectivity: 1,
-            clearcoat:1,
-            clearcoatRoughness: 0.01
-        }),
-        // meshMaterial = new THREE.Material(),
-        mesh = new THREE.Mesh(meshGeometry,meshMaterial),
-        axisWidth = 9,
-        axisLength = 6,
-        bodyMass = 120,
-        bodyPosition = new CANNON.Vec3(-10, 40.5, 0),
-        bodyShape = new CANNON.Box(new CANNON.Vec3(meshGeometry.parameters.width/2, meshGeometry.parameters.height/2, meshGeometry.parameters.depth/2)),
-        // bodyShape = new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
-
-        bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
-        body  = new CANNON.Body({
-            mass: bodyMass,
-            position: bodyPosition,
-            shape: bodyShape,
-            material: bodyMaterial 
-        }),
-        rigidVehicle = new CANNON.RigidVehicle({
-            chassisBody: body,
-        }),
-        wheelRadius = 1.1,
-        wheelPositions=[
-            new CANNON.Vec3(axisWidth / 2, 0, -axisLength),
-            new CANNON.Vec3(-axisWidth / 2, 0, -axisLength),
-            new CANNON.Vec3(axisWidth / 2, 0, axisLength),
-            new CANNON.Vec3(-axisWidth / 2, 0, axisLength)
-        ],
-        wheelColors= [
-            new THREE.Color(0,0,1),
-            new THREE.Color(0,1,0),
-            new THREE.Color(1,0,0),
-            new THREE.Color(1,1,0),
+    constructor(data: Partial<Vehicle>){
+        console.log('INTO CONSTRUCTOR')
+        Object.assign(this,data);
+        console.log(this)
+        if(this.meshGeometry && this.meshMaterial){
+            this.vehicleMesh = new THREE.Mesh(this.meshGeometry,this.meshMaterial);
+        }else{
+            this.meshGeometry = this.vehicleMesh.geometry;
+            this.meshMaterial = this.vehicleMesh.material as THREE.Material;
+        }
+        this.rigidVehicle = new CANNON.RigidVehicle({
+            chassisBody: this.vehicleBody,
+        });
+        this.wheelPositions = [
+            new CANNON.Vec3(this.axisWidth / 2, 0, -this.axisLength),
+            new CANNON.Vec3(-this.axisWidth / 2, 0, -this.axisLength),
+            new CANNON.Vec3(this.axisWidth / 2, 0, this.axisLength),
+            new CANNON.Vec3(-this.axisWidth / 2, 0, this.axisLength)
         ]
-        ){
-          
-        this.cameraMode = cameraMode;
-        this.axisWidth = axisWidth;
-        this.axisLength = axisLength;
-        this.vehicleMeshGeometry = meshGeometry;
-        this.vehicleMeshMaterial = meshMaterial;
-        this.vehicleMesh = mesh;
-        this.vehicleBody = body
-        this.rigidVehicle = rigidVehicle;
-        this.wheelRadius = wheelRadius;
-        this.wheelPositions = wheelPositions;
-        this.wheelColors = wheelColors;
-        // const objLoader = new OBJLoader();
-        // objLoader.load('models/eskei.obj', (sk8) => {
-        //     this.vehicleMesh = sk8.children[0] as THREE.Mesh;
-        //     this.vehicleMesh.material = new THREE.Material();
-            
-        // }); 
+        console.log('OUTTA CONSTRUCTOR')
     }
+
+    
+    // constructor(
+    //     cameraMode = 1,
+    //     // meshGeometry = new THREE.BoxGeometry(8, 1, 16),
+    //     meshGeometry = new THREE.BufferGeometry(),
+    //     meshMaterial = new THREE.MeshPhysicalMaterial({ 
+    //         color: 0xaaaaaa,
+    //         side: THREE.FrontSide,
+    //         wireframe: false,
+    //         roughness: 0.01,
+    //         metalness: 0.9,
+    //         reflectivity: 1,
+    //         clearcoat:1,
+    //         clearcoatRoughness: 0.01
+    //     }),
+    //     // meshMaterial = new THREE.Material(),
+    //     mesh = new THREE.Mesh(meshGeometry,meshMaterial),
+    //     axisWidth = 9,
+    //     axisLength = 6,
+    //     bodyMass = 120,
+    //     bodyPosition = new CANNON.Vec3(-10, 40.5, 0),
+    //     // bodyShape = new CANNON.Box(new CANNON.Vec3(meshGeometry.parameters.width/2, meshGeometry.parameters.height/2, meshGeometry.parameters.depth/2)),
+    //     bodyShape = new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+
+    //     bodyMaterial = new CANNON.Material({ friction: 2, restitution: 0.9 }),
+    //     body  = new CANNON.Body({
+    //         mass: bodyMass,
+    //         position: bodyPosition,
+    //         shape: bodyShape,
+    //         material: bodyMaterial 
+    //     }),
+    //     rigidVehicle = new CANNON.RigidVehicle({
+    //         chassisBody: body,
+    //     }),
+    //     wheelRadius = 1.1,
+    //     wheelPositions=[
+    //         new CANNON.Vec3(axisWidth / 2, 0, -axisLength),
+    //         new CANNON.Vec3(-axisWidth / 2, 0, -axisLength),
+    //         new CANNON.Vec3(axisWidth / 2, 0, axisLength),
+    //         new CANNON.Vec3(-axisWidth / 2, 0, axisLength)
+    //     ],
+    //     wheelColors= [
+    //         new THREE.Color(0,0,1),
+    //         new THREE.Color(0,1,0),
+    //         new THREE.Color(1,0,0),
+    //         new THREE.Color(1,1,0),
+    //     ]
+    //     ){
+    //     this.cameraMode = cameraMode;
+    //     this.axisWidth = axisWidth;
+    //     this.axisLength = axisLength;
+    //     this.vehicleMeshGeometry = meshGeometry;
+    //     this.vehicleMeshMaterial = meshMaterial;
+    //     this.vehicleMesh = mesh;
+    //     this.vehicleBody = body
+    //     this.rigidVehicle = rigidVehicle;
+    //     this.wheelRadius = wheelRadius;
+    //     this.wheelPositions = wheelPositions;
+    //     this.wheelColors = wheelColors;
+    //     console.log('vehicle constructor')
+    // }
 
     public addCamera(size: number[],label:string){
         this.camera = new THREE.PerspectiveCamera(35, size[0]/size[1], 1, 2000)
@@ -108,19 +124,6 @@ export class Vehicle {
         return this.camera;
     }
 
-    public loadVehicleMesh() {
-        const objLoader = new OBJLoader();
-        let mesh = new THREE.Mesh();
-        objLoader.load('models/eskei.obj', (sk8) => {
-            mesh = sk8.children[0] as THREE.Mesh;
-            // this.addMesh(mesh);
-        });
-        return mesh;
-    }
-
-    public addMesh(mesh: THREE.Mesh){
-        this.vehicleMesh = mesh;
-    }
 
     public addWheels(scene: THREE.Scene,wheelBodyMaterial: CANNON.Material){
         //WHEELS

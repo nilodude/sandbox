@@ -6,6 +6,7 @@ import * as CANNON from 'cannon-es'
 import * as utils from '../client/utils'
 import { Vehicle } from '../client/vehicle'
 import { Ground } from './ground';
+import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect';
 
 GUIUtils.startGUI();
 
@@ -15,8 +16,8 @@ const height = window.innerHeight;
 // const size = [870, 840]; // split screen
 const size = [width, height]; // fullscreen
 const canvas = document.getElementById('canvasID') as HTMLCanvasElement
-const renderer = new THREE.WebGLRenderer({ canvas: canvas })
-renderer.setSize(size[0], size[1])
+const renderer = new THREE.WebGLRenderer(/*{ canvas: canvas }*/) // se le quita el canvas para ver solo ascii
+renderer.setSize(width, height)
 
 //SCENE
 const scene = new THREE.Scene()
@@ -38,26 +39,46 @@ const sphereBody = utils.addSphereBody(world,wheelPhysMat);
 const sphereMesh = utils.spawnWireframeSphere(scene)
 
 
-const objLoader = new OBJLoader();
-        let mesh = new THREE.Mesh();
-        objLoader.load('models/eskei.obj',
-        (sk8) => {
-            mesh = sk8.children[0] as THREE.Mesh;
-            mesh.material = new THREE.Material();
-            console.log('model loaded');
-            
-        },
-        ()=>console.log('loading model')
-        );
+document.addEventListener('keydown',(event)=>{
+    
+    if( event.key == 'Enter'){
 
-// scene.add(skateMesh)
-
-
+    }
+})
 
 // VEHICLE
-let vehicle = new Vehicle();
-// vehicle.loadVehicleMesh();
-// vehicle.addMesh(skateMesh);
+let vehicle = new Vehicle({
+    cameraMode : 1,
+    meshGeometry: new THREE.BoxGeometry(8, 1, 16),
+    meshMaterial: new THREE.MeshPhysicalMaterial({ 
+        color: 0xaaaaaa,
+        side: THREE.FrontSide,
+        wireframe: false,
+        roughness: 0.01,
+        metalness: 0.9,
+        reflectivity: 1,
+        clearcoat:1,
+        clearcoatRoughness: 0.01
+    }),
+    // vehicleMesh: await utils.loadVehicleMesh() as THREE.Mesh<THREE.BufferGeometry, THREE.Material>,    
+    axisWidth : 9,
+    axisLength : 6,
+    vehicleBody: new CANNON.Body({
+        mass: 120,
+        position: new CANNON.Vec3(-10, 40.5, 0),
+        shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
+        material:  new CANNON.Material({ friction: 2, restitution: 0.9 }) 
+    }),
+    wheelRadius : 1.1,
+    wheelColors: [
+        new THREE.Color(0, 0, 1),
+        new THREE.Color(0, 1, 0),
+        new THREE.Color(1, 0, 0),
+        new THREE.Color(1, 1, 0),
+    ]}
+);
+// vehicle.loadMesh();
+console.log(vehicle)
 vehicle.addWheels(scene,wheelPhysMat);
 vehicle.setupControls();
 vehicle.addLights(scene);
@@ -78,6 +99,16 @@ world.broadphase = new CANNON.NaiveBroadphase(); // Detect coilliding objects
 const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
 let theta = 0;
+
+renderer.setClearColor(0xfff0f0); //cambiando esto se consigue manipular el contraste
+
+let effect = new AsciiEffect(renderer);
+effect.setSize(width,height);
+
+let container = document.createElement('div');
+document.body.appendChild(container);
+container.appendChild(effect.domElement);
+
 
 function animate() {
     theta += 0.1;
@@ -105,9 +136,8 @@ function animate() {
 
     ground.update();
 
-    // rampMesh.position.copy(utils.copyVector(rampBody.position)); 
-    // rampMesh.quaternion.copy(utils.copyQuaternion(rampBody.quaternion));
     
+    if(vehicle){
     vehicle.updatePosition();
 
     //UPDATE HUD
@@ -127,11 +157,13 @@ function animate() {
        });
 
     }
+    }
     render();
 }
 
 function render() {
-    renderer.render(scene, vehicle.camera)
+    effect.render(scene, vehicle.camera);
+    // renderer.render(scene, vehicle.camera)
 }
 
 animate()

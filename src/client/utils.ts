@@ -1,5 +1,5 @@
 import * as CANNON from 'cannon-es'
-import THREE = require('three');
+import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as GUIUtils from '../client/gui'
 
@@ -117,23 +117,6 @@ function addWorldLights(scene: THREE.Scene, groundSize: number){
     }
 }
 
-function addGroundMesh(scene: THREE.Scene, groundSize: number) {
-    const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
-    const groundMat = new THREE.MeshPhysicalMaterial({
-        color: 0xaa00ff,
-        side: THREE.FrontSide,
-        wireframe: false,
-        sheenRoughness: 0.001,
-        roughness: 0.001,
-        metalness: 0.5,
-        reflectivity: 1,
-    });
-    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
-    scene.add(groundMesh);
-    return groundMesh;
-}
-
-
 async function loadVehicleMesh() {
     return new Promise((resolve)=>{
         const objLoader = new OBJLoader();
@@ -206,6 +189,5 @@ spawnWireframeCube,
 spawnWireframeSphere,
 showGridHelper, 
 addWorldLights,
-addGroundMesh,
 addSphereBody,
 toggleHelp}

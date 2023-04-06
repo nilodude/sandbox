@@ -6,13 +6,29 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Vehicle } from './vehicle';
 
 export class Ground {
-    groundMesh: THREE.Mesh;
-    groundBody: CANNON.Body;
+    public groundMesh: THREE.Mesh = new THREE.Mesh;
+    public groundBody: CANNON.Body= new CANNON.Body;
+    
+    addGroundMesh(scene: THREE.Scene, groundSize: number) {
+        const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
+        const groundMat = new THREE.MeshPhysicalMaterial({
+            color: 0xaa00ff,
+            side: THREE.FrontSide,
+            wireframe: false,
+            sheenRoughness: 0.001,
+            roughness: 0.001,
+            metalness: 0.5,
+            reflectivity: 1,
+        });
+        const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+        scene.add(groundMesh);
+        return groundMesh;
+    }
 
     setupGround(scene: THREE.Scene, world: CANNON.World, groundSize: number, wheelPhysMat: CANNON.Material, vehicle: Vehicle) {
 
         //GROUND MESH
-        this.groundMesh = utils.addGroundMesh(scene, groundSize);
+        this.groundMesh = this.addGroundMesh(scene, groundSize);
 
         //GROUND PHYSICS MATERIAL
         const groundPhysMat = new CANNON.Material();
@@ -101,5 +117,8 @@ export class Ground {
     update(){
         this.groundMesh.position.copy(utils.copyVector(this.groundBody.position));
         this.groundMesh.quaternion.copy(utils.copyQuaternion(this.groundBody.quaternion));
+
+        // rampMesh.position.copy(utils.copyVector(rampBody.position)); 
+        // rampMesh.quaternion.copy(utils.copyQuaternion(rampBody.quaternion));
     }
 }

@@ -12,4 +12,7 @@ module.exports = merge(common, {
         },
         hot: true,
     },
+    experiments: {
+        topLevelAwait: true
+    }
 })

@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "ES2022",
+        "moduleResolution": "node",
+        "strict": true,
+    },
+    "include": ["**/*.ts"]
+}
