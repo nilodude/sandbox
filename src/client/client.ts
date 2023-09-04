@@ -16,7 +16,7 @@ const height = window.innerHeight;
 // const size = [870, 840]; // split screen
 const size = [width, height]; // fullscreen
 const canvas = document.getElementById('canvasID') as HTMLCanvasElement
-const renderer = new THREE.WebGLRenderer(/*{ canvas: canvas }*/) // se le quita el canvas para ver solo ascii
+const renderer = new THREE.WebGLRenderer({ canvas: canvas }) // se le quita el canvas para ver solo ascii
 renderer.setSize(width, height)
 
 //SCENE
@@ -100,14 +100,14 @@ const timeStep = 1 / 60 // seconds
 let lastCallTime: number;
 let theta = 0;
 
-renderer.setClearColor(0xfff0f0); //cambiando esto se consigue manipular el contraste
+// renderer.setClearColor(0xfff0f0); //cambiando esto se consigue manipular el contraste
 
 let effect = new AsciiEffect(renderer);
 effect.setSize(width,height);
 
-let container = document.createElement('div');
-document.body.appendChild(container);
-container.appendChild(effect.domElement);
+// let container = document.createElement('div');
+// document.body.appendChild(container);
+// container.appendChild(effect.domElement);
 
 
 function animate() {
