@@ -10,10 +10,10 @@ export class Ground {
     public groundBody: CANNON.Body= new CANNON.Body;
     
     addGroundMesh(scene: THREE.Scene, groundSize: number) {
-        const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize);
+        const groundGeo = new THREE.TorusGeometry(groundSize/8, groundSize/24);
         const groundMat = new THREE.MeshPhysicalMaterial({
             color: 0xaa00ff,
-            side: THREE.FrontSide,
+            side: THREE.DoubleSide,
             wireframe: false,
             sheenRoughness: 0.001,
             roughness: 0.001,
