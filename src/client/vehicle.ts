@@ -261,7 +261,8 @@ export class Vehicle {
                     this.camera.rotation.z = -0.29;
                     break;
                 case 'r':
-                    this.vehicleBody.position.setZero();
+                    this.vehicleBody.position.x = 50+3000/8    
+                // this.vehicleBody.position.setZero();
                     this.vehicleBody.velocity.setZero();
                     this.vehicleBody.inertia = new CANNON.Vec3(0, 0, 0);
                     this.wheelBodies.forEach(wheelBody=>wheelBody.quaternion = wheelBody.initQuaternion)

@@ -108,7 +108,8 @@ effect.setSize(width,height);
 // let container = document.createElement('div');
 // document.body.appendChild(container);
 // container.appendChild(effect.domElement);
-
+vehicle.vehicleBody.position.x = 50+groundSize/8
+// vehicle.vehicleBody.position.y = 50+groundSize/8
 
 function animate() {
     theta += 0.1;
@@ -138,7 +139,7 @@ function animate() {
 
     
     if(vehicle){
-    vehicle.updatePosition();
+        vehicle.updatePosition();
 
     //UPDATE HUD
     if (vehicle.shouldUpdateHUD) {

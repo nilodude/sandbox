@@ -10,11 +10,11 @@ export class Ground {
     public groundBody: CANNON.Body= new CANNON.Body;
     
     addGroundMesh(scene: THREE.Scene, groundSize: number) {
-        const groundGeo = new THREE.TorusGeometry(groundSize/8, groundSize/24);
+        const groundGeo = new THREE.TorusGeometry(groundSize/8, groundSize/24, 24, 32, Math.PI *4);
         const groundMat = new THREE.MeshPhysicalMaterial({
             color: 0xaa00ff,
             side: THREE.DoubleSide,
-            wireframe: false,
+            wireframe: true,
             sheenRoughness: 0.001,
             roughness: 0.001,
             metalness: 0.5,
@@ -35,8 +35,9 @@ export class Ground {
 
         //GROUND BODY
         this.groundBody = new CANNON.Body({
+            mass: 100000,
             type: CANNON.Body.STATIC,
-            shape: new CANNON.Plane(),
+            shape: CANNON.Trimesh.createTorus(groundSize/8, groundSize/24, 8, 6, Math.PI * 4),
             material: groundPhysMat
         })
         this.groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
