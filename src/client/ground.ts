@@ -8,9 +8,13 @@ import { Vehicle } from './vehicle';
 export class Ground {
     public groundMesh: THREE.Mesh = new THREE.Mesh;
     public groundBody: CANNON.Body= new CANNON.Body;
-    
+    radialScale: number = 270;
+    tubularScale: number = 170;
+    radialP: number = 12;
+    tubularP: number = 10;
+
     addGroundMesh(scene: THREE.Scene, groundSize: number) {
-        const groundGeo = new THREE.TorusGeometry(groundSize/8, groundSize/24, 24, 32, Math.PI *4);
+        const groundGeo = new THREE.TorusGeometry(this.radialScale, this.tubularScale, this.radialP,this.tubularP, Math.PI *2);
         const groundMat = new THREE.MeshPhysicalMaterial({
             color: 0xaa00ff,
             side: THREE.DoubleSide,
@@ -39,7 +43,7 @@ export class Ground {
             mass: 100000,
             type: CANNON.Body.STATIC,
             
-            shape: CANNON.Trimesh.createTorus(groundSize/8, groundSize/24, 12, 16, Math.PI * 2),
+            shape: CANNON.Trimesh.createTorus(this.radialScale, this.tubularScale, this.radialP,this.tubularP, Math.PI * 2),
             material: groundPhysMat
         })
         this.groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up

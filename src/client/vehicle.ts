@@ -28,7 +28,7 @@ export class Vehicle {
 
 
     constructor(data: Partial<Vehicle>){
-        console.log('INTO CONSTRUCTOR')
+        console.log('INNA CONSTRUCTOR')
         Object.assign(this,data);
         console.log(this)
         if(this.meshGeometry && this.meshMaterial){
@@ -359,7 +359,7 @@ export class Vehicle {
         });
 
         this.avgSpeed = (this.rigidVehicle.getWheelSpeed(2) + this.rigidVehicle.getWheelSpeed(3)) / 2
-
+        //NEED TO FIND A WAY TO DETECT WHEN VEHICLE IS NOT TOUCHING GROUND
         this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
 
         if (this.cameraMode === 1) {

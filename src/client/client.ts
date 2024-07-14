@@ -45,7 +45,7 @@ document.addEventListener('keydown',(event)=>{
 
     }
 })
-
+let initialPos = new CANNON.Vec3( 250, -150, 0)
 // VEHICLE
 let vehicle = new Vehicle({
     cameraMode : 3,
@@ -65,7 +65,7 @@ let vehicle = new Vehicle({
     axisLength : 6,
     vehicleBody: new CANNON.Body({
         mass: 120,
-        position: new CANNON.Vec3(-10, 40.5, 0),
+        position: initialPos,
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
         material:  new CANNON.Material({ friction: 2, restitution: 0.9 }) 
     }),
@@ -108,7 +108,7 @@ effect.setSize(width,height);
 // let container = document.createElement('div');
 // document.body.appendChild(container);
 // container.appendChild(effect.domElement);
-vehicle.vehicleBody.position.x = 50+groundSize/8
+// vehicle.vehicleBody.position.x = 50+groundSize/8
 // vehicle.vehicleBody.position.y = 50+groundSize/8
 
 function animate() {
