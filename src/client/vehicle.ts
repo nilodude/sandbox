@@ -12,7 +12,7 @@ export class Vehicle {
     public vehicleBody: CANNON.Body = new CANNON.Body();
     axisWidth: number  = 9;
     axisLength: number = 6;
-    public wheelRadius: number = 1;
+    public wheelRadius: number = 5;
     wheelPositions: CANNON.Vec3[]  = [];
     wheelColors: THREE.Color[]  = [];
     public wheelBodies: CANNON.Body[] = [];

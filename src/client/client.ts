@@ -48,7 +48,7 @@ document.addEventListener('keydown',(event)=>{
 
 // VEHICLE
 let vehicle = new Vehicle({
-    cameraMode : 1,
+    cameraMode : 3,
     meshGeometry: new THREE.BoxGeometry(8, 1, 16),
     meshMaterial: new THREE.MeshPhysicalMaterial({ 
         color: 0xaaaaaa,
