@@ -15,3 +15,8 @@
     -need to sum mouse inertia to existing inertia while air rolling
 
     -need to improve friction wheel-ground
+
+
+    14/07/24:
+        -everything should be refactored from 0
+        -the main concepts are working, just need to have real control of whats happening, enough with "prototyping"
