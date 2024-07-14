@@ -8,9 +8,9 @@ import { Vehicle } from './vehicle';
 export class Ground {
     public groundMesh: THREE.Mesh = new THREE.Mesh;
     public groundBody: CANNON.Body= new CANNON.Body;
-    radialScale: number = 270;
-    tubularScale: number = 170;
-    radialP: number = 12;
+    radialScale: number = 250;
+    tubularScale: number = 120;
+    radialP: number = 30;
     tubularP: number = 10;
 
     addGroundMesh(scene: THREE.Scene, groundSize: number) {
@@ -54,7 +54,7 @@ export class Ground {
             groundPhysMat,
             wheelPhysMat,
             {
-                restitution: 0.69,
+                restitution: 0.1,
                 friction: 0.7
             }
         );

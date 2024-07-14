@@ -45,7 +45,7 @@ document.addEventListener('keydown',(event)=>{
 
     }
 })
-let initialPos = new CANNON.Vec3( 250, -150, 0)
+let initialPos = new CANNON.Vec3( 220, -100, 0)
 // VEHICLE
 let vehicle = new Vehicle({
     cameraMode : 3,
@@ -64,12 +64,12 @@ let vehicle = new Vehicle({
     axisWidth : 9,
     axisLength : 6,
     vehicleBody: new CANNON.Body({
-        mass: 120,
+        mass: 50,
         position: initialPos,
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
         material:  new CANNON.Material({ friction: 2, restitution: 0.9 }) 
     }),
-    wheelRadius : 1.5,
+    wheelRadius : 2,
     wheelColors: [
         new THREE.Color(0, 0, 1),
         new THREE.Color(0, 1, 0),

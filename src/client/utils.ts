@@ -75,19 +75,19 @@ function addWorldLights(scene: THREE.Scene, groundSize: number){
     scene.add(ambientLight)
 
     // RECTANGLE LIGHTS
-    const newRectLight = ()=>new THREE.RectAreaLight( 0xffff00, 1500,  groundSize, 0.2);
-    const rectsPerGround = 14;
+    const newRectLight = ()=>new THREE.RectAreaLight( 0xffffff, 1500,  groundSize, 0.2);
+    const rectsPerGround = 30;
     const rectLightSpacing = groundSize / rectsPerGround;
     
     for(let i=0;i<=rectsPerGround;i++){
         const rectLight = newRectLight();
-        rectLight.position.set( 0, 30, (groundSize/2)- i*rectLightSpacing);
+        rectLight.position.set( 0, -30, (groundSize/2)- i*rectLightSpacing);
         rectLight.lookAt( 0, 0, 0 );
         scene.add(rectLight);
     }
     
     //SPOTLIGHTS
-    const numLights = 24;
+    const numLights = 1;
     const lightsPerSide = numLights/4;
     const spacing = groundSize/lightsPerSide;
     
