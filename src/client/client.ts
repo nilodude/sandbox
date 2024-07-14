@@ -70,7 +70,7 @@ let vehicle = new Vehicle({
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
         material:  new CANNON.Material({ friction: 2, restitution: 0.9 }) 
     }),
-    wheelRadius : 1.2,
+    wheelRadius : 2,
     wheelColors: [
         new THREE.Color(0, 0, 1),
         new THREE.Color(0, 1, 0),

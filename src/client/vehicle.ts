@@ -163,7 +163,7 @@ export class Vehicle {
         let jumpVelocity = 200
         let jumpReleased = true;
         utils.toggleHelp(this.showHelp);
-        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 24 : Math.PI / 16;
+        let maxSteerVal = this.avgSpeed > 90 ? Math.PI / 48 : Math.PI / 16;
         document.addEventListener('keydown', (event) => {
             
             const maxForce = this.avgSpeed < 50 ? 2200 : 1900;
@@ -179,6 +179,8 @@ export class Vehicle {
                     // if (!this.air) {
                         this.rigidVehicle.setWheelForce(maxForce, 0);
                         this.rigidVehicle.setWheelForce(maxForce, 1);
+                        this.rigidVehicle.setWheelForce(maxForce/2, 2);
+                        this.rigidVehicle.setWheelForce(maxForce/2, 3);
                     // }
                     break;
 
@@ -187,6 +189,7 @@ export class Vehicle {
                     // if (!this.air) {
                         this.rigidVehicle.setWheelForce(-maxForce, 0);
                         this.rigidVehicle.setWheelForce(-maxForce, 1);
+                        
                     // }
                     break;
 
@@ -286,6 +289,8 @@ export class Vehicle {
                 case 'ArrowUp':
                     this.rigidVehicle.setWheelForce(0, 0);
                     this.rigidVehicle.setWheelForce(0, 1);
+                    this.rigidVehicle.setWheelForce(0, 2);
+                    this.rigidVehicle.setWheelForce(0, 3);
                     break;
                 case 's':
                 case 'ArrowDown':
@@ -370,7 +375,7 @@ export class Vehicle {
             let sign = Math.sign(this.vehicleBody.position.z / 10);
             this.camera.position.y = 20 + (sign * (zpos));
         } else if (this.cameraMode == 2) {
-            let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,0,this.vehicleBody.velocity.z).length()/85;
+            let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,this.vehicleBody.velocity.y,this.vehicleBody.velocity.z).length()/86;
             
             //NEED TO FIND A WAY TO DETECT WHEN VEHICLE SWITCHES DIRECTION FORWARDS/BACKWARDS.
             // console.table([this.rigidVehicle.getWheelSpeed(0),this.rigidVehicle.getWheelSpeed(1),this.rigidVehicle.getWheelSpeed(2),this.rigidVehicle.getWheelSpeed(3)]);
@@ -384,10 +389,11 @@ export class Vehicle {
             // forward = 1 -> camera OK going forwards
             // forward = -1 -> camera OK going backwards
             let forward = 1;
-
+            
             this.camera.position.x = this.vehicleMesh.position.x - forward*this.vehicleBody.velocity.x/magnitude;
             this.camera.position.y = this.vehicleMesh.position.y + 20;
             this.camera.position.z = this.vehicleMesh.position.z - forward*this.vehicleBody.velocity.z/magnitude;
+
 
 
         }else if(this.cameraMode == 3){

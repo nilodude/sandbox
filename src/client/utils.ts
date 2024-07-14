@@ -81,34 +81,33 @@ function addWorldLights(scene: THREE.Scene, groundSize: number){
     
     for(let i=0;i<=rectsPerGround;i++){
         const rectLight = newRectLight();
-        rectLight.position.set( 0, -30, (groundSize/2)- i*rectLightSpacing);
+        rectLight.position.set( 0, -118, (groundSize/2)- i*rectLightSpacing);
         rectLight.lookAt( 0, 0, 0 );
         scene.add(rectLight);
     }
     
     //SPOTLIGHTS
     const numLights = 1;
-    const lightsPerSide = numLights/4;
+    const lightsPerSide = numLights/8;
     const spacing = groundSize/lightsPerSide;
     
-    const newSpotlight = ()=>new THREE.SpotLight(0xffffff, 50, 1000, Math.PI /4, 1)
-
+    const newSpotlight = ()=>new THREE.SpotLight(0xffffff, 50, 2000, Math.PI /4, 1)
     for(let i=0;i<=lightsPerSide;i++){
         const spotlight1 = newSpotlight()
-        spotlight1.position.set(groundSize/2, 5,(groundSize/2)-i*spacing ) 
-        spotlight1.target.position.set(0, 0, 0)
+        spotlight1.position.set(groundSize/2, 0,(groundSize/2)-i*spacing ) 
+        spotlight1.target.position.set(0, 0,(groundSize/2)-i*spacing )
         
         const spotlight2 = newSpotlight()
-        spotlight2.position.set(-groundSize/2, 5,(groundSize/2)-i*spacing ) 
-        spotlight2.target.position.set(0, 0, 0)
+        spotlight2.position.set(-groundSize/2, 0,(groundSize/2)-i*spacing ) 
+        spotlight2.target.position.set(0, 0,(groundSize/2)-i*spacing )
         
         const spotlight3 = newSpotlight()
-        spotlight3.position.set(-(groundSize/2)+i*spacing, 5,groundSize/2) 
-        spotlight3.target.position.set(0, 0, 0)
+        spotlight3.position.set(-(groundSize/2)+i*spacing, 0,groundSize/2) 
+        spotlight3.target.position.set(0, 0,(groundSize/2)-i*spacing )
     
         const spotlight4 = newSpotlight()
-        spotlight4.position.set(-(groundSize/2)+i*spacing, 5,-groundSize/2) 
-        spotlight4.target.position.set(0, 0, 0)
+        spotlight4.position.set(-(groundSize/2)+i*spacing, 0,-groundSize/2) 
+        spotlight4.target.position.set(0, 0,(groundSize/2)-i*spacing )
         
         scene.add(spotlight1)
         scene.add(spotlight2)

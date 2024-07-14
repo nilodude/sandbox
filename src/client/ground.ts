@@ -10,15 +10,15 @@ export class Ground {
     public groundBody: CANNON.Body= new CANNON.Body;
     radialScale: number = 250;
     tubularScale: number = 120;
-    radialP: number = 30;
-    tubularP: number = 10;
+    radialP: number = 100;
+    tubularP: number = 150;
 
     addGroundMesh(scene: THREE.Scene, groundSize: number) {
         const groundGeo = new THREE.TorusGeometry(this.radialScale, this.tubularScale, this.radialP,this.tubularP, Math.PI *2);
         const groundMat = new THREE.MeshPhysicalMaterial({
             color: 0xaa00ff,
             side: THREE.DoubleSide,
-            wireframe: false,
+            wireframe: true,
             sheenRoughness: 0.001,
             roughness: 0.001,
             metalness: 0.5,
@@ -54,8 +54,8 @@ export class Ground {
             groundPhysMat,
             wheelPhysMat,
             {
-                restitution: 0.1,
-                friction: 0.7
+                restitution: 0.01,
+                friction: 0.8
             }
         );
         world.addContactMaterial(groundWheelContactMat);
