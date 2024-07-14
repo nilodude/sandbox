@@ -5,8 +5,9 @@ import * as utils from '../client/utils'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 export class Vehicle {
+    initialPosition: CANNON.Vec3 = new CANNON.Vec3( 220, -100, 0);
     // vehicleGeometry: THREE.ConeGeometry = new THREE.ConeGeometry(4,2);
-    meshGeometry: THREE.BufferGeometry | undefined;
+    meshGeometry: THREE.BufferGeometry = new THREE.BufferGeometry();
     meshMaterial: THREE.Material | undefined;
     public vehicleMesh: THREE.Mesh = new THREE.Mesh();
     public vehicleBody: CANNON.Body = new CANNON.Body();
@@ -25,7 +26,7 @@ export class Vehicle {
     private mouseClicked = false;
     public shouldUpdateHUD = true;
     public showHelp = true;
-
+    box = new THREE.Box3();
 
     constructor(data: Partial<Vehicle>){
         console.log('INNA CONSTRUCTOR')
@@ -175,35 +176,35 @@ export class Vehicle {
                     break;
                 case 'w':
                 case 'ArrowUp':
-                    if (!this.air) {
+                    // if (!this.air) {
                         this.rigidVehicle.setWheelForce(maxForce, 0);
                         this.rigidVehicle.setWheelForce(maxForce, 1);
-                    }
+                    // }
                     break;
 
                 case 's':
                 case 'ArrowDown':
-                    if (!this.air) {
+                    // if (!this.air) {
                         this.rigidVehicle.setWheelForce(-maxForce, 0);
                         this.rigidVehicle.setWheelForce(-maxForce, 1);
-                    }
+                    // }
                     break;
 
                 case 'a':
                 case 'ArrowLeft':
-                    if (!this.air) {
+                    // if (!this.air) {
                         this.rigidVehicle.setSteeringValue(maxSteerVal, 0);
                         this.rigidVehicle.setSteeringValue(maxSteerVal, 1);
-                    }
+                    // }
                     break;
 
                 case 'd':
                 case 'ArrowRight':
-                    if (!this.air) {
+                    // if (!this.air) {
 
                         this.rigidVehicle.setSteeringValue(-maxSteerVal, 0);
                         this.rigidVehicle.setSteeringValue(-maxSteerVal, 1);
-                    }
+                    // }
                     break;
 
                 case ' ':
@@ -261,7 +262,7 @@ export class Vehicle {
                     this.camera.rotation.z = -0.29;
                     break;
                 case 'r':
-                    this.vehicleBody.position.x = 50+3000/8    
+                    // this.vehicleBody.position.x = 50+3000/8    
                 // this.vehicleBody.position.setZero();
                     this.vehicleBody.velocity.setZero();
                     this.vehicleBody.inertia = new CANNON.Vec3(0, 0, 0);
@@ -272,8 +273,8 @@ export class Vehicle {
                     this.vehicleBody.torque.setZero();
                     this.vehicleBody.angularVelocity.set(0, 0, 0)
                     this.vehicleBody.quaternion = this.vehicleBody.initQuaternion;
-                    this.vehicleBody.position.setZero();
-                    this.vehicleMesh.position.set(0,0,0);
+                    this.vehicleBody.position = this.initialPosition
+                    // this.vehicleMesh.position.set(0,0,0);
                     break;
             }
         });
@@ -362,8 +363,8 @@ export class Vehicle {
 
         this.avgSpeed = (this.rigidVehicle.getWheelSpeed(2) + this.rigidVehicle.getWheelSpeed(3)) / 2
         //NEED TO FIND A WAY TO DETECT WHEN VEHICLE IS NOT TOUCHING GROUND
-        this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
-
+        // this.air = !this.wheels.map(wheel => wheel.body.position.y).some(pos => pos < this.wheelRadius)
+        this.air = true
         if (this.cameraMode === 1) {
             let zpos = this.vehicleBody.position.z / 10;
             let sign = Math.sign(this.vehicleBody.position.z / 10);
@@ -396,5 +397,7 @@ export class Vehicle {
         }
 
         this.camera.lookAt(this.vehicleMesh.position);
+        this.box.copy( this.vehicleMesh.geometry.boundingBox ??  new THREE.Box3() ).applyMatrix4( this.vehicleMesh.matrixWorld );
     }
+    
 }

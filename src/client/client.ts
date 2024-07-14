@@ -49,6 +49,7 @@ let initialPos = new CANNON.Vec3( 220, -100, 0)
 // VEHICLE
 let vehicle = new Vehicle({
     cameraMode : 3,
+    initialPosition: initialPos,
     meshGeometry: new THREE.BoxGeometry(8, 1, 16),
     meshMaterial: new THREE.MeshPhysicalMaterial({ 
         color: 0xaaaaaa,
@@ -69,7 +70,7 @@ let vehicle = new Vehicle({
         shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 8)),
         material:  new CANNON.Material({ friction: 2, restitution: 0.9 }) 
     }),
-    wheelRadius : 2,
+    wheelRadius : 1.2,
     wheelColors: [
         new THREE.Color(0, 0, 1),
         new THREE.Color(0, 1, 0),
