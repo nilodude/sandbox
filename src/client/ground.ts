@@ -19,6 +19,7 @@ export class Ground {
             roughness: 0.001,
             metalness: 0.5,
             reflectivity: 1,
+            transmission: 0.5
         });
         const groundMesh = new THREE.Mesh(groundGeo, groundMat);
         scene.add(groundMesh);
