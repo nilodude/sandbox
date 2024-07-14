@@ -133,7 +133,7 @@ export class Vehicle {
 
         for(let i=0;i<4;i++){
             const wheelBody = new CANNON.Body({
-                mass: 5, //kg
+                mass: 7, //kg
                 angularDamping: angularDamping,
                 shape: new CANNON.Sphere(this.wheelRadius),
                 material: wheelBodyMaterial // este spherePhysMat (o como se llame en cada sitio, wheelBodyMaterial) es el que se va a asociar con el groundPhysMat para definir la fisica del contacto entre esos dos materiales
@@ -375,7 +375,7 @@ export class Vehicle {
             let sign = Math.sign(this.vehicleBody.position.z / 10);
             this.camera.position.y = 20 + (sign * (zpos));
         } else if (this.cameraMode == 2) {
-            let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,this.vehicleBody.velocity.y,this.vehicleBody.velocity.z).length()/86;
+            let magnitude = new CANNON.Vec3(this.vehicleBody.velocity.x,0,this.vehicleBody.velocity.z).length()/86;
             
             //NEED TO FIND A WAY TO DETECT WHEN VEHICLE SWITCHES DIRECTION FORWARDS/BACKWARDS.
             // console.table([this.rigidVehicle.getWheelSpeed(0),this.rigidVehicle.getWheelSpeed(1),this.rigidVehicle.getWheelSpeed(2),this.rigidVehicle.getWheelSpeed(3)]);
