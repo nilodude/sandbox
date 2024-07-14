@@ -337,15 +337,17 @@ export class Vehicle {
 
     public addLights(scene: THREE.Scene) {
         //VEHICLE LIGHTS
-        const spotlight = new THREE.SpotLight(0x5522aa, 2, 500, 3 * Math.PI, 1)
-        spotlight.position.set(0, 0.5, 0)
-        // spotlight.target.position.set(0, 0, 0)  //para que parezcan neones del coche se deja de apuntar al centro
+        const spotlight = new THREE.SpotLight(0x5522aa, 10, 500,Math.PI/4, 0.9)
+        spotlight.position.set(0, 0.3, -11)
+        spotlight.target.position.set(0, 0.1, -12)
         spotlight.castShadow = true
+        scene.add(spotlight.target)
         scene.add(spotlight)
-
+        
         //VEHICLE MESH
-        spotlight.target = this.vehicleMesh;
+        // spotlight.target = this.vehicleMesh;
         this.vehicleMesh.add(spotlight)
+        this.vehicleMesh.add(spotlight.target)
         scene.add(this.vehicleMesh);
     }
 
