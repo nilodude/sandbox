@@ -1,0 +1,47 @@
+body {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+}
+/* div{
+    display: unset;
+} */
+
+#HUD{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    color: antiquewhite;
+    font-family: monospace;
+    font-size: 0.9vw;
+
+    top: 2%;
+    left: 2%;
+    width: 20%;
+    height: 15%;
+}
+
+#visible{
+    display: flex;
+    justify-content: space-around;
+}
+
+#help{
+    display: flex;
+    flex-direction: column;
+    flex-basis: 75%;
+    justify-content: space-between;
+}
+
+#camera{
+    display: flex;
+    flex-basis: 51%;
+    justify-content: space-evenly;
+}
+.numCamera{
+    padding: 0% 2%;  
+}
