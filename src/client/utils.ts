@@ -120,9 +120,10 @@ async function loadVehicleMesh() {
     return new Promise((resolve)=>{
         const objLoader = new OBJLoader();
         let mesh = new THREE.Mesh();
-        objLoader.load('models/eskei.obj',
-        (sk8) => {
-            mesh = sk8.children[0] as THREE.Mesh;
+        objLoader.load('models/cacharro.obj',
+        (cacharro) => {
+            console.log(cacharro)
+            mesh = cacharro.children[0] as THREE.Mesh;
             mesh.material = new THREE.Material();
             console.log('model loaded');
             resolve(mesh);

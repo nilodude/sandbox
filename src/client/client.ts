@@ -21,7 +21,8 @@ renderer.setSize(width, height)
 
 //SCENE
 const scene = new THREE.Scene()
-const groundSize = 3000;
+const groundSize = 500;
+
 //LIGHTS
 utils.addWorldLights(scene, groundSize);
 
